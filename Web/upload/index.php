@@ -12,7 +12,7 @@ session_start();
 // MySQL database credentials
 define('SQL_SERVER', 'localhost');
 define('SQL_USER', 'root');
-define('SQL_PASS', 'secret');
+define('SQL_PASS', 'changeme');
 define('SQL_DB', 'snowdb');
 
 // Emulator credentials
@@ -237,8 +237,8 @@ function outputPortal()
 
 function outputClient($character)
 {
-	define('SSO_TICKET', sha1(SESSION_ID . $_SESSION['USER_I']));
-	mysql_query('UPDATE characters SET auth_ticket = "' . $auth_ticket . '" WHERE id = ' . $character . ' LIMIT 1');
+	define('SSO_TICKET', sha1(rand(1000, 9999) . $_SESSION['USER_I']));
+	mysql_query('UPDATE characters SET auth_ticket = "' . SSO_TICKET . '" WHERE id = ' . $character . ' LIMIT 1') or err(mysql_error());
 
 	echo '
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>

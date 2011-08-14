@@ -78,6 +78,7 @@ namespace Snowlight.Game.Sessions
                 if (Ticket.Length <= 5)
                 {
                     mFailedLoginCount++;
+                    Output.WriteLine("Login from " + RemoteAddress + " rejected: SSO ticket too short.");
                     return 0;
                 }
 
@@ -102,9 +103,17 @@ namespace Snowlight.Game.Sessions
                 }
 
                 // Check if ticket was OK + Check for user id bans
-                if (UserId <= 0 || ModerationBanManager.IsUserIdBlacklisted(UserId))
+                if (UserId <= 0)
                 {
                     mFailedLoginCount++;
+                    Output.WriteLine("Login from " + RemoteAddress + " rejected: invalid SSO ticket.");
+                    return 0;
+                }
+
+                if (ModerationBanManager.IsUserIdBlacklisted(UserId))
+                {
+                    mFailedLoginCount++;
+                    Output.WriteLine("Login from " + RemoteAddress + " rejected: blacklisted IP address.");
                     return 0;
                 }
 

@@ -1,23 +1,28 @@
 <?php
 
-// This is a temporary script until RetroCMS is ready for upload.
-// This is a bit (very) hackish, so bear with me. Not suitable for live hotels. Then again, this is just a development release...
+// SNOWLIGHT WEB PORTAL - VERSION 2
+// 
+// This is a temporary script for development on Snowlight Emulator.
+// It is not intended to run in live hotel mode, but although you can use it to show your latest progress to some friends - it's running stable...
+// More information at   http://www.retrodev.org/forum/threads/web-dev-only-snowlight-web.824/
 
 @ob_start();
 session_start();
 
-function err($errstr = 'unknown') { @ob_end_clean(); die('<h1>Error</h1><hr />' . $errstr . '<hr /><i>Snowlight login/reg script</i>'); }
-
+// MySQL database credentials
 define('SQL_SERVER', 'localhost');
 define('SQL_USER', 'root');
-define('SQL_PASS', 'test');
-define('SQL_DB', 'snowlight');
+define('SQL_PASS', 'secret');
+define('SQL_DB', 'snowdb');
+
+// Emulator credentials
+define('EMU_IP', '127.0.0.1');
+define('EMU_PORT', '38101');
+
+function err($errstr = 'unknown') { @ob_end_clean(); die('<h1>Error</h1><hr />' . $errstr . '<hr /><i>Snowlight login/reg script</i>'); }
 
 mysql_connect(SQL_SERVER, SQL_USER, SQL_PASS) or err(mysql_error());
 mysql_select_db(SQL_DB) or err(mysql_error());
-
-define('USER_I', isset($_SESSION['USER_I']) ? intval($_SESSION['USER_I']) : 0);
-define('USER_H', isset($_SESSION['USER_H']) ? $_SESSION['USER_H'] : '');
 
 ?>
 
@@ -61,7 +66,7 @@ define('USER_H', isset($_SESSION['USER_H']) ? $_SESSION['USER_H'] : '');
 	
 <?php
 
-if (USER_S != true || USER_I <= 0)
+if ($_SESSION['USER_S'] != true || $_SESSION['USER_I'] <= 0)
 {
 	isset($_GET['reg']) ? outputRegister() : outputLogin();
 	exit;
@@ -232,14 +237,10 @@ function outputPortal()
 
 function outputClient($character)
 {
-	$auth_ticket = sha1(SESSION_ID . $_SESSION['USER_I']);
+	define('SSO_TICKET', sha1(SESSION_ID . $_SESSION['USER_I']));
 	mysql_query('UPDATE characters SET auth_ticket = "' . $auth_ticket . '" WHERE id = ' . $character . ' LIMIT 1');
 
 	echo '
-<!doctype html>
-<html lang="en" dir="ltr">
-<head>
-<title>A client</title>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
 <style type="text/css">
 * { margin: 0; padding: 0; }
@@ -255,8 +256,8 @@ html, #client { height: 100%; text-align: left; background-color: black; }
             "client.starting" : "Welcome to uberHotel BETA! Now loading.", 
             "client.allow.cross.domain" : "1", 
             "client.notify.cross.domain" : "0", 
-            "connection.info.host" : "127.0.0.1", 
-            "connection.info.port" : "38101", 
+            "connection.info.host" : "' . EMU_IP . '", 
+            "connection.info.port" : "' . EMU_PORT . '", 
             "site.url" : "http://www.uberhotel.org", 
             "url.prefix" : "http://www.uberhotel.org", 
             "client.reload.url" : "http://www.uberhotel.org/index.php?page=client", 
@@ -269,7 +270,7 @@ html, #client { height: 100%; text-align: left; background-color: black; }
             "productdata.load.url" : "http://cdn.uber.meth0d.org/gamedata/productdata", 
             "furnidata.load.url" : "http://cdn.uber.meth0d.org/gamedata/furnidata", 
             "use.sso.ticket" : "1", 
-            "sso.ticket" : "' . $auth_ticket . '", 
+            "sso.ticket" : "' . SSO_TICKET . '", 
             "processlog.enabled" : "0", 
             "flash.client.url" : BaseUrl, 
             "flash.client.origin" : "popup" 
@@ -285,11 +286,7 @@ html, #client { height: 100%; text-align: left; background-color: black; }
 	swfobject.embedSWF(BaseUrl + "/Uber.swf", "client", "100%", "100%", "10.0.0", "http://cdn.uber.meth0d.org/expressInstall.swf", flashvars, params, null);	
 
 </script>
-</head>
-<body>
-<div id="client"></div>
-</body>
-</html>';
+<div id="client"></div>';
 }
 
 ?>

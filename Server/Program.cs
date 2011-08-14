@@ -148,7 +148,7 @@ namespace Snowlight
             }
             catch (Exception e)
             {
-                HandleFatalError("Could not initialize Snowlight: " + e.Message);
+                HandleFatalError("Could not initialize Snowlight: " + e.Message + "\n" + e.StackTrace);
                 return;
             }
 

@@ -654,7 +654,7 @@ namespace Snowlight.Game.Navigation
 
         public static bool StaffPickedContainsRoom(uint RoomId)
         {
-            uint CategoryId = (uint)ConfigManager.GetValue("rooms.staffpicked.category");
+            uint CategoryId = (uint)(int)ConfigManager.GetValue("rooms.staffpicked.category");
 
             lock (mOfficialItems)
             {
@@ -672,7 +672,7 @@ namespace Snowlight.Game.Navigation
 
         public static void AddRoomToStaffPicked(uint RoomId)
         {
-            uint CategoryId = (uint)ConfigManager.GetValue("rooms.staffpicked.category");
+            uint CategoryId = (uint)(int)ConfigManager.GetValue("rooms.staffpicked.category");
 
             lock (mOfficialItems)
             {
@@ -690,7 +690,7 @@ namespace Snowlight.Game.Navigation
 
         public static void RemoveRoomFromStaffPicked(uint RoomId)
         {
-            uint CategoryId = (uint)ConfigManager.GetValue("rooms.staffpicked.category");
+            uint CategoryId = (uint)(int)ConfigManager.GetValue("rooms.staffpicked.category");
 
             lock (mOfficialItems)
             {

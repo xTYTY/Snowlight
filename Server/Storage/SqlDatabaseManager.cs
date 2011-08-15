@@ -15,6 +15,7 @@ namespace Snowlight.Storage
         private static int mPoolLifetime;
         private static int mClientIdGenerator;
         private static object mSyncRoot;
+        private static ManualResetEvent mPoolWait;
 
         public static int ClientCount
         {
@@ -31,6 +32,7 @@ namespace Snowlight.Storage
             mMaxPoolSize = (int)ConfigManager.GetValue("mysql.pool.max");
             mPoolLifetime = (int)ConfigManager.GetValue("mysql.pool.lifetime");
             mSyncRoot = new object();
+            mPoolWait = new ManualResetEvent(true);
 
             Thread MonitorThread = new Thread(new ThreadStart(ProcessMonitorThread));
             MonitorThread.Priority = ThreadPriority.Lowest;
@@ -187,14 +189,14 @@ namespace Snowlight.Storage
                 Output.WriteLine("(Sql) Client starvation; out of assignable clients/maximum pool size reached. Consider increasing the `mysql.pool.max` configuration value. Starvation count is " + mStarvationCounter + ".", OutputLevel.Warning);
 
                 // Wait until an available client returns
-                Monitor.Wait(mSyncRoot);
+                mPoolWait.WaitOne();
                 return GetClient();
             }
         }
 
         public static void PokeAllAwaiting()
         {
-            Monitor.PulseAll(mSyncRoot);
+            mPoolWait.Set();
         }
 
         private static int GenerateClientId()

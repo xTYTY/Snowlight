@@ -70,9 +70,7 @@ namespace Snowlight
                 Input.ProcessInput(arg.Split(' '));
             }
 
-            // setup threadpool stuff - TODO: Edit these values for recommended stuff.. per cpu basis etc...?
-            ThreadPool.SetMinThreads(5, 5);
-            ThreadPool.SetMaxThreads(30, 30);
+            ThreadPool.SetMinThreads(10, 10);
 
             try
             {

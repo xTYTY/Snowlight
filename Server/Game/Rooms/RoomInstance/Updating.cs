@@ -15,7 +15,9 @@ namespace Snowlight.Game.Rooms
 {
     public partial class RoomInstance : IDisposable
     {
-        public void PerformUpdate()
+        private Timer mUpdater;
+
+        public void PerformUpdate(object state)
         {
             List<RoomActor> ActorsToUpdate = new List<RoomActor>();
             List<RoomActor> ActorsToRemove = new List<RoomActor>();

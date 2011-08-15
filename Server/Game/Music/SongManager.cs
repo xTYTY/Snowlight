@@ -20,7 +20,7 @@ namespace Snowlight.Game.Music
 
         private static Dictionary<uint, SongData> mSongCache;
         private static Dictionary<uint, double> mCacheTimer;
-        private static Thread mCacheMonitorThread;
+        private static Timer mCacheMonitor;
         private static object mSyncRoot;
 
         public static void Initialize()
@@ -29,10 +29,7 @@ namespace Snowlight.Game.Music
             mCacheTimer = new Dictionary<uint, double>();
             mSyncRoot = new object();
 
-            mCacheMonitorThread = new Thread(new ThreadStart(ProcessThread));
-            mCacheMonitorThread.Priority = ThreadPriority.Lowest;
-            mCacheMonitorThread.Name = "SongCacheManager";
-            mCacheMonitorThread.Start();
+            mCacheMonitor = new Timer(ProcessThread, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
 
             DataRouter.RegisterHandler(OpcodesIn.GET_MUSIC_DATA, new ProcessRequestCallback(GetSongData));
             DataRouter.RegisterHandler(OpcodesIn.JUKEBOX_PLAYLIST_ADD, new ProcessRequestCallback(AddToPlaylist));
@@ -41,38 +38,28 @@ namespace Snowlight.Game.Music
             DataRouter.RegisterHandler(OpcodesIn.JUKEBOX_GET_PLAYLIST, new ProcessRequestCallback(GetPlaylist));
         }
 
-        public static void ProcessThread()
+        public static void ProcessThread(object state)
         {
-            try
+            double CurrentTime = UnixTimestamp.GetCurrent();
+
+            lock (mSyncRoot)
             {
-                while (Program.Alive)
+                List<uint> ToRemove = new List<uint>();
+
+                foreach (KeyValuePair<uint, double> CacheData in mCacheTimer)
                 {
-                    Thread.Sleep(5000);
-
-                    double CurrentTime = UnixTimestamp.GetCurrent();
-
-                    lock (mSyncRoot)
+                    if (CurrentTime - CacheData.Value >= CACHE_LIFETIME)
                     {
-                        List<uint> ToRemove = new List<uint>();
-
-                        foreach (KeyValuePair<uint, double> CacheData in mCacheTimer)
-                        {
-                            if (CurrentTime - CacheData.Value >= CACHE_LIFETIME)
-                            {
-                                ToRemove.Add(CacheData.Key);
-                            }
-                        }
-
-                        foreach (uint RemoveId in ToRemove)
-                        {
-                            mSongCache.Remove(RemoveId);
-                            mCacheTimer.Remove(RemoveId);
-                        }
+                        ToRemove.Add(CacheData.Key);
                     }
                 }
+
+                foreach (uint RemoveId in ToRemove)
+                {
+                    mSongCache.Remove(RemoveId);
+                    mCacheTimer.Remove(RemoveId);
+                }
             }
-            catch (ThreadAbortException) { }
-            catch (ThreadInterruptedException) { }
         }
 
         public static SongData GetSongFromDataRow(DataRow Row)

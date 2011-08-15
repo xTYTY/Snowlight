@@ -143,7 +143,8 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
                         break;
                     }
 
-                    if (!Distance.TilesTouching(TargetActor.Position.GetVector2(), Item.RoomPosition.GetVector2()))
+                    if (!Distance.TilesTouching(TargetActor.Position.GetVector2(), Item.RoomPosition.GetVector2())
+                        && !Distance.IsDiagonal(TargetActor.Position.GetVector2(), Item.RoomPosition.GetVector2()))
                     {
                         TargetActor.MoveToItemAndInteract(Item, RequestData);
                         break;

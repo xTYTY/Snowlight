@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Net;
+using System.Threading;
 
 using Snowlight.Communication.Incoming;
 using Snowlight.Config;
@@ -68,6 +69,10 @@ namespace Snowlight
                 Output.WriteLine("Command line argument: " + arg);
                 Input.ProcessInput(arg.Split(' '));
             }
+
+            // setup threadpool stuff - TODO: Edit these values for recommended stuff.. per cpu basis etc...?
+            ThreadPool.SetMinThreads(5, 5);
+            ThreadPool.SetMaxThreads(30, 30);
 
             try
             {

@@ -161,7 +161,7 @@ namespace Snowlight.Game.Rooms
                             Instance.MarkedAsEmpty = 0;
                         }
 
-                        Instance.PerformUpdate();
+                        //Instance.PerformUpdate();
                     }
 
                     lock (mRoomInstances)

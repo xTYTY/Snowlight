@@ -8,50 +8,36 @@ namespace Snowlight.Communication.ResponseCache
     {
         private int mCacheItemLifetime;
         private List<ResponseCacheItem> mCachedResponses;
-        private Thread mCacheMonitorThread;
+        private Timer mCacheMonitor;
 
         public ResponseCacheController(int ItemLifetime)
         {
             mCacheItemLifetime = ItemLifetime;
             mCachedResponses = new List<ResponseCacheItem>();
 
-            mCacheMonitorThread = new Thread(new ThreadStart(ProcessCacheMonitor));
-            mCacheMonitorThread.Priority = ThreadPriority.BelowNormal;
-            mCacheMonitorThread.Name = "CacheControllerInstanceThread";
-            mCacheMonitorThread.Start();
+            mCacheMonitor = new Timer(ProcessCacheMonitor, null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(mCacheItemLifetime));
         }
 
         public void Dispose()
         {
-            if (mCacheMonitorThread != null)
+            if (mCacheMonitor != null)
             {
-                mCacheMonitorThread.Abort();
-                mCacheMonitorThread = null;
+                mCacheMonitor.Dispose();
+                mCacheMonitor = null;
             }
 
             if (mCachedResponses != null)
             {
                 mCachedResponses.Clear();
-                mCacheMonitorThread = null;
             }
         }
 
-        private void ProcessCacheMonitor()
+        private void ProcessCacheMonitor(object state)
         {
-            try
+            lock (mCachedResponses)
             {
-                while (Program.Alive)
-                {
-                    lock (mCachedResponses)
-                    {
-                        mCachedResponses.Clear();
-                    }
-
-                    Thread.Sleep(mCacheItemLifetime * 1000);
-                }
+                mCachedResponses.Clear();
             }
-            catch (ThreadAbortException) { }
-            catch (ThreadInterruptedException) { }
         }
 
         public void ClearCache()

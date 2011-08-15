@@ -61,6 +61,8 @@ namespace Snowlight.Storage
             mAvailable = true;
             UpdateLastActivity();
             Output.WriteLine("(Sql) Released client " + Id + " for availability.", OutputLevel.DebugInformation);
+
+            SqlDatabaseManager.PokeAllAwaiting();
         }
 
         /// <summary>

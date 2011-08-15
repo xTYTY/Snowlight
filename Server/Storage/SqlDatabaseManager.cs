@@ -181,15 +181,20 @@ namespace Snowlight.Storage
                     SetClientAmount(ClientCount + 1, "out of assignable clients in GetClient()");
                     return GetClient();
                 }
+
+                mStarvationCounter++;
+
+                Output.WriteLine("(Sql) Client starvation; out of assignable clients/maximum pool size reached. Consider increasing the `mysql.pool.max` configuration value. Starvation count is " + mStarvationCounter + ".", OutputLevel.Warning);
+
+                // Wait until an available client returns
+                Monitor.Wait(mSyncRoot);
+                return GetClient();
             }
+        }
 
-            mStarvationCounter++;
-
-            Output.WriteLine("(Sql) Client starvation; out of assignable clients/maximum pool size reached. Consider increasing the `mysql.pool.max` configuration value. Starvation count is " + mStarvationCounter + ".", OutputLevel.Warning);
-
-            // Wait for a bit and try again, we have exceeded all our limits and have nothing available.
-            Thread.Sleep(100);
-            return GetClient();
+        public static void PokeAllAwaiting()
+        {
+            Monitor.PulseAll(mSyncRoot);
         }
 
         private static int GenerateClientId()

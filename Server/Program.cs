@@ -140,10 +140,11 @@ namespace Snowlight
                     DrinkSetManager.Initialize(MySqlClient);
                     SongManager.Initialize();
                     TradeHandler.Initialize();
-
-                    // Polish/misc
-                    WarningSurpressors.Initialize();
                     RandomGenerator.Initialize();
+                    StatisticsSyncUtil.Initialize();
+
+                    // Polish
+                    WarningSurpressors.Initialize();
                 }
             }
             catch (Exception e)
@@ -167,6 +168,7 @@ namespace Snowlight
             MySqlClient.ExecuteNonQuery("UPDATE rooms SET current_users = 0");
             MySqlClient.SetParameter("timestamp", UnixTimestamp.GetCurrent());
             MySqlClient.ExecuteNonQuery("UPDATE room_visits SET timestamp_left = @timestamp WHERE timestamp_left = 0");
+            MySqlClient.ExecuteNonQuery("UPDATE characters SET auth_ticket = ''");
         }
 
         public static void HandleFatalError(string Message)

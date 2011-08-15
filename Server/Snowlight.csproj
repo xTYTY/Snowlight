@@ -390,6 +390,7 @@
     <Compile Include="Storage\SqlDatabaseManager.cs" />
     <Compile Include="UnixTimestamp.cs" />
     <Compile Include="Util\Base64Encoding.cs" />
+    <Compile Include="Util\Statistics.cs" />
     <Compile Include="Util\UserInputFilter.cs" />
     <Compile Include="Util\WireEncoding.cs" />
   </ItemGroup>

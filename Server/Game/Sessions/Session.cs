@@ -428,23 +428,9 @@ namespace Snowlight.Game.Sessions
                 SendData(MessageOfTheDayComposer.Compose("Welcome to uberHotel.org BETA.\n\n\nThank you for participating in the uberHotel.org BETA test. We hope to gather relevant feedback and ideas to help make this hotel into a success.\n\nPlease submit any bugs, feedback, or ideas via:\nhttp://snowlight.uservoice.com\n\n\nHave fun, and thank you for joining us!"));
                 SendData(AchievementDataListComposer.Compose(AchievementManager.Achievements.Values.ToList()));
 
-                // This is available status packet (AvailabilityStatusMessageComposer)
-                ServerMessage UnkMessage2 = new ServerMessage(290);
-                UnkMessage2.AppendInt32(1);
-                UnkMessage2.AppendInt32(0);
-                SendData(UnkMessage2);
-
-                // This is info feed packet (InfoFeedEnableMessageComposer)
-                ServerMessage UnkMessage3 = new ServerMessage(517);
-                UnkMessage3.AppendInt32(1); // 1 = enabled     0 = disabled  (true/false)
-                SendData(UnkMessage3);
-
-                // This is activity points message (ActivityPointsMessageComposer)  not sure how this is handled...
-                ServerMessage UnkMessage4 = new ServerMessage(628);
-                UnkMessage4.AppendInt32(1);
-                UnkMessage4.AppendInt32(0);
-                UnkMessage4.AppendInt32(2971);
-                SendData(UnkMessage4);
+                SendData(AvailabilityStatusMessageComposer.Compose());
+                SendData(InfoFeedEnableMessageComposer.Compose(1));
+                SendData(ActivityPointsMessageComposer.Compose());
 
                 SendData(ClientConfigComposer.Compose(CharacterInfo.ConfigVolume, false));
 

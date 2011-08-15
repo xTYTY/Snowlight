@@ -30,6 +30,10 @@ namespace Snowlight.Game.Messenger
             DataRouter.RegisterHandler(OpcodesIn.MESSENGER_UPDATE, new ProcessRequestCallback(OnMessengerUpdate));
             DataRouter.RegisterHandler(OpcodesIn.MESSENGER_FOLLOW_BUDDY, new ProcessRequestCallback(OnFollowBuddy));
             DataRouter.RegisterHandler(OpcodesIn.MESSENGER_SEND_IM_INVITE, new ProcessRequestCallback(OnInvite));
+
+            // new friends stream, needs to be coded & added to Opcodes
+            DataRouter.RegisterHandler(500, new ProcessRequestCallback(GetEventStream));
+            DataRouter.RegisterHandler(501, new ProcessRequestCallback(GetEventStreamAllowed));
         }
 
         public static void ForceMessengerUpdateForSession(Session SessionToUpdate)
@@ -430,6 +434,16 @@ namespace Snowlight.Game.Messenger
 
                 TargetSession.SendData(MessengerImInviteComposer.Compose(Session.CharacterId, MessageText));
             }
+        }
+
+        private static void GetEventStream(Session Session, ClientMessage Message)
+        {
+            // TODO: Code this here..
+        }
+
+        private static void GetEventStreamAllowed(Session Session, ClientMessage Message)
+        {
+            // TODO: Code this here...
         }
         #endregion
     }

@@ -66,7 +66,7 @@ mysql_select_db(SQL_DB) or err(mysql_error());
 	
 <?php
 
-if ($_SESSION['USER_S'] != true || $_SESSION['USER_I'] <= 0)
+if (!isset($_SESSION['USER_S']) || !isset($_SESSION['USER_I']) || $_SESSION['USER_S'] != true || $_SESSION['USER_I'] <= 0)
 {
 	isset($_GET['reg']) ? outputRegister() : outputLogin();
 	exit;
@@ -238,7 +238,7 @@ function outputPortal()
 function outputClient($character)
 {
 	define('SSO_TICKET', sha1(rand(1000, 9999) . $_SESSION['USER_I']));
-	mysql_query('UPDATE characters SET auth_ticket = "' . SSO_TICKET . '" WHERE id = ' . $character . ' LIMIT 1') or err(mysql_error());
+	mysql_query('UPDATE characters SET auth_ticket = "' . SSO_TICKET . '" WHERE id = ' . $character . ' AND account_uid = ' . $_SESSION['USER_I'] . ' LIMIT 1') or err(mysql_error());
 
 	echo '
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>

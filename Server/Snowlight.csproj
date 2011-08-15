@@ -88,6 +88,11 @@
     <Compile Include="Communication\Outgoing\Achievements\QuestCompletedComposer.cs" />
     <Compile Include="Communication\Outgoing\Achievements\QuestListComposer.cs" />
     <Compile Include="Communication\Outgoing\Achievements\QuestStartedComposer.cs" />
+    <Compile Include="Communication\Outgoing\Availability\AvailabilityStatusMessageComposer.cs" />
+    <Compile Include="Communication\Outgoing\Availability\AvailabilityTimeMessageComposer.cs" />
+    <Compile Include="Communication\Outgoing\Availability\InfoHotelClosedMessageComposer.cs" />
+    <Compile Include="Communication\Outgoing\Availability\InfoHotelClosingMessageComposer.cs" />
+    <Compile Include="Communication\Outgoing\Availability\LoginFailedHotelClosedMessageComposer.cs" />
     <Compile Include="Communication\Outgoing\Catalog\CatalogCanGiftComposer.cs" />
     <Compile Include="Communication\Outgoing\Catalog\CatalogClubOffersComposer.cs" />
     <Compile Include="Communication\Outgoing\Catalog\CatalogIndexComposer.cs" />
@@ -114,6 +119,8 @@
     <Compile Include="Communication\Outgoing\Furni\RollerEventComposer.cs" />
     <Compile Include="Communication\Outgoing\Furni\SongDataComposer.cs" />
     <Compile Include="Communication\Outgoing\Furni\StickyDataComposer.cs" />
+    <Compile Include="Communication\Outgoing\Handshake\UniqueMachineIDComposer.cs" />
+    <Compile Include="Communication\Outgoing\Handshake\UserRightsMessageComposer.cs" />
     <Compile Include="Communication\Outgoing\Inventory\InventoryComposer.cs" />
     <Compile Include="Communication\Outgoing\Inventory\InventoryItemAddedComposer.cs" />
     <Compile Include="Communication\Outgoing\Inventory\InventoryItemRemovedComposer.cs" />
@@ -162,6 +169,8 @@
     <Compile Include="Communication\Outgoing\Navigator\NavigatorOfficialRoomsComposer.cs" />
     <Compile Include="Communication\Outgoing\Navigator\NavigatorPopularTagListComposer.cs" />
     <Compile Include="Communication\Outgoing\Navigator\NavigatorRoomListComposer.cs" />
+    <Compile Include="Communication\Outgoing\Notifications\ActivityPointsMessageComposer.cs" />
+    <Compile Include="Communication\Outgoing\Notifications\InfoFeedEnableMessageComposer.cs" />
     <Compile Include="Communication\Outgoing\Rooms\RoomCanCreateEventComposer.cs" />
     <Compile Include="Communication\Outgoing\Rooms\RoomCanCreateResult.cs" />
     <Compile Include="Communication\Outgoing\Rooms\RoomChatComposer.cs" />
@@ -224,7 +233,7 @@
     <Compile Include="Communication\Outgoing\Rooms\TradeInitiatedComposer.cs" />
     <Compile Include="Communication\Outgoing\Rooms\TradeOffersComposer.cs" />
     <Compile Include="Communication\Outgoing\User\ActivityPointsBalanceComposer.cs" />
-    <Compile Include="Communication\Outgoing\User\AuthenticationOkComposer.cs" />
+    <Compile Include="Communication\Outgoing\Handshake\AuthenticationOkComposer.cs" />
     <Compile Include="Communication\Outgoing\User\ClientConfigComposer.cs" />
     <Compile Include="Communication\Outgoing\User\CreditsBalanceComposer.cs" />
     <Compile Include="Communication\Outgoing\User\FuseRightsListComposer.cs" />
@@ -241,8 +250,11 @@
     <Compile Include="Communication\Outgoing\User\UserAlertModernComposer.cs" />
     <Compile Include="Communication\Outgoing\User\UserHomeRoomComposer.cs" />
     <Compile Include="Communication\Outgoing\User\UserInfoUpdateComposer.cs" />
-    <Compile Include="Communication\Outgoing\User\UserObjectComposer.cs" />
+    <Compile Include="Communication\Outgoing\Handshake\UserObjectComposer.cs" />
     <Compile Include="Communication\Outgoing\User\UserWardrobeComposer.cs" />
+    <Compile Include="Communication\Outgoing\Wired\WiredFurniActionComposer.cs" />
+    <Compile Include="Communication\Outgoing\Wired\WiredFurniConditionComposer.cs" />
+    <Compile Include="Communication\Outgoing\Wired\WiredFurniTriggerComposer.cs" />
     <Compile Include="Communication\ResponseCache\ResponseCacheController.cs" />
     <Compile Include="Communication\ResponseCache\ResponseCacheItem.cs" />
     <Compile Include="Config\ConfigManager.cs" />
@@ -423,6 +435,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

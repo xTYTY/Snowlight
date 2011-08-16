@@ -33,6 +33,11 @@ namespace Snowlight.Game.Handlers
             // com.sulake.habbo.communication.messages.outgoing.tracking.LatencyPingReportMessageComposer;
             // something to do with latency..
             DataRouter.RegisterHandler(316, new ProcessRequestCallback(SurpressingHandler));
+
+            // com.sulake.habbo.communication.messages.outgoing.quest.FriendRequestQuestCompleteMessageComposer;
+            // this is packet to complete the friend request quest, should only be completed if quest is active....
+            // someone needs to code this ^_^
+            DataRouter.RegisterHandler(3210, new ProcessRequestCallback(SurpressingHandler));
         }
 
         private static void SurpressingHandler(Session Session, ClientMessage Message)

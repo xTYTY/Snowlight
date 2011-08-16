@@ -23,8 +23,8 @@ namespace Snowlight.Game.Rooms
         #region Fields & Properties
         public const int ROOM_UPDATE_SPEED = 500;
 
-        private static Thread mRoomInstanceThread;
-        private static Thread mRoomWritebackThread;
+        private static Timer mRoomInstanceThread;
+        private static Timer mRoomWritebackThread;
 
         private static Dictionary<uint, RoomInstance> mRoomInstances;
         private static Dictionary<string, RoomModel> mRoomModels;
@@ -54,15 +54,8 @@ namespace Snowlight.Game.Rooms
 
             ReloadModels(MySqlClient);
 
-            mRoomInstanceThread = new Thread(new ThreadStart(ProcessRooms));
-            mRoomInstanceThread.Name = "RoomInstanceThread";
-            mRoomInstanceThread.Priority = ThreadPriority.Highest;
-            mRoomInstanceThread.Start();
-
-            mRoomWritebackThread = new Thread(new ThreadStart(ProcessWritebacks));
-            mRoomWritebackThread.Name = "RoomWritebackThread";
-            mRoomWritebackThread.Priority = ThreadPriority.BelowNormal;
-            mRoomWritebackThread.Start();
+            mRoomInstanceThread = new Timer(new TimerCallback(ProcessRooms), null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
+            mRoomWritebackThread = new Timer(new TimerCallback(ProcessWritebacks), null, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10));
 
             mInstanceIdGenerator = 1;
             mIdGeneratorSyncLock = new object();
@@ -113,180 +106,146 @@ namespace Snowlight.Game.Rooms
         #endregion
 
         #region Room Instance Process Thread
-        private static void ProcessRooms()
+        private static void ProcessRooms(object state)
         {
-            try
+            Dictionary<uint, RoomInstance> Copy = new Dictionary<uint, RoomInstance>();
+
+            lock (mRoomInstances)
             {
-                while (Program.Alive)
+                foreach (KeyValuePair<uint, RoomInstance> CopyItem in mRoomInstances)
                 {
-                    DateTime ExecStart = DateTime.Now;
-                    Dictionary<uint, RoomInstance> Copy = new Dictionary<uint, RoomInstance>();
-
-                    lock (mRoomInstances)
-                    {
-                        foreach (KeyValuePair<uint, RoomInstance> CopyItem in mRoomInstances)
-                        {
-                            Copy.Add(CopyItem.Key, CopyItem.Value);
-                        }
-                    }
-
-                    List<uint> ToDispose = new List<uint>();
-                    List<uint> ToUnload = new List<uint>();
-
-                    foreach (RoomInstance Instance in Copy.Values)
-                    {
-                        if (Instance.Unloaded)
-                        {
-                            if (Instance.TimeUnloaded > 15)
-                            {
-                                ToDispose.Add(Instance.InstanceId);
-                                continue;
-                            }
-                        }
-                        else if (Instance.HumanActorCount == 0)
-                        {
-                            if (Instance.MarkedAsEmpty >= 10)
-                            {
-                                ToUnload.Add(Instance.InstanceId);
-                            }
-                            else
-                            {
-                                Instance.MarkedAsEmpty++;
-                            }
-
-                            continue;
-                        }
-                        else if (Instance.MarkedAsEmpty > 0)
-                        {
-                            Instance.MarkedAsEmpty = 0;
-                        }
-
-                        Instance.PerformUpdate();
-                    }
-
-                    lock (mRoomInstances)
-                    {
-                        foreach (uint UnloadId in ToUnload)
-                        {
-                            if (mRoomInstances.ContainsKey(UnloadId))
-                            {
-                                mRoomInstances[UnloadId].Unload();
-                                Output.WriteLine("[RoomMgr] Unloaded room instance " + UnloadId + ".", OutputLevel.DebugInformation);
-                            }
-                        }
-
-                        foreach (uint DisposeId in ToDispose)
-                        {
-                            if (mRoomInstances.ContainsKey(DisposeId))
-                            {
-                                mRoomInstances[DisposeId].Dispose();
-                                mRoomInstances[DisposeId] = null;
-                                mRoomInstances.Remove(DisposeId);
-                                Output.WriteLine("[RoomMgr] Disposed of room instance " + DisposeId + " and associated resources.", OutputLevel.DebugInformation);
-                            }
-                        }
-                    }
-
-                    double Time = (ROOM_UPDATE_SPEED - ((TimeSpan)(DateTime.Now - ExecStart)).TotalMilliseconds);
-
-                    if (Time < 0)
-                    {
-                        Time = 0;
-                        Output.WriteLine("Can't keep up! Did the system time change, or is the server overloaded?", OutputLevel.Warning);
-                    }
-
-                    if (Time > ROOM_UPDATE_SPEED)
-                    {
-                        Time = ROOM_UPDATE_SPEED;
-                    }
-
-                    Thread.Sleep((int)Time);
+                    Copy.Add(CopyItem.Key, CopyItem.Value);
                 }
             }
-            catch (ThreadAbortException) { }
-            catch (ThreadInterruptedException) { }
+
+            List<uint> ToDispose = new List<uint>();
+            List<uint> ToUnload = new List<uint>();
+
+            foreach (RoomInstance Instance in Copy.Values)
+            {
+                if (Instance.Unloaded)
+                {
+                    if (Instance.TimeUnloaded > 15)
+                    {
+                        ToDispose.Add(Instance.InstanceId);
+                        continue;
+                    }
+                }
+                else if (Instance.HumanActorCount == 0)
+                {
+                    if (Instance.MarkedAsEmpty >= 10)
+                    {
+                        ToUnload.Add(Instance.InstanceId);
+                    }
+                    else
+                    {
+                        Instance.MarkedAsEmpty++;
+                    }
+
+                    continue;
+                }
+                else if (Instance.MarkedAsEmpty > 0)
+                {
+                    Instance.MarkedAsEmpty = 0;
+                }
+
+                //Instance.PerformUpdate();
+            }
+
+            lock (mRoomInstances)
+            {
+                foreach (uint UnloadId in ToUnload)
+                {
+                    if (mRoomInstances.ContainsKey(UnloadId))
+                    {
+                        mRoomInstances[UnloadId].Unload();
+                        Output.WriteLine("[RoomMgr] Unloaded room instance " + UnloadId + ".", OutputLevel.DebugInformation);
+                    }
+                }
+
+                foreach (uint DisposeId in ToDispose)
+                {
+                    if (mRoomInstances.ContainsKey(DisposeId))
+                    {
+                        mRoomInstances[DisposeId].Dispose();
+                        mRoomInstances[DisposeId] = null;
+                        mRoomInstances.Remove(DisposeId);
+                        Output.WriteLine("[RoomMgr] Disposed of room instance " + DisposeId + " and associated resources.", OutputLevel.DebugInformation);
+                    }
+                }
+            }
         }
         #endregion
 
         #region Database writeback management
-        private static void ProcessWritebacks()
+        private static void ProcessWritebacks(object state)
         {
-            try
+            // Item location/state writebacks
+            Dictionary<Item, bool> WritebackCopy = new Dictionary<Item, bool>();
+
+            lock (mWritebackItems)
             {
-                while (Program.Alive)
+                foreach (KeyValuePair<Item, bool> CopyItem in mWritebackItems)
                 {
-                    // Item location/state writebacks
-                    Dictionary<Item, bool> WritebackCopy = new Dictionary<Item, bool>();
+                    WritebackCopy.Add(CopyItem.Key, CopyItem.Value);
+                }
 
-                    lock (mWritebackItems)
+                mWritebackItems.Clear();
+            }
+
+            if (WritebackCopy.Count > 0)
+            {
+                using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    foreach (KeyValuePair<Item, bool> Item in WritebackCopy)
                     {
-                        foreach (KeyValuePair<Item, bool> CopyItem in mWritebackItems)
-                        {
-                            WritebackCopy.Add(CopyItem.Key, CopyItem.Value);
-                        }
-
-                        mWritebackItems.Clear();
+                        Item.Key.SynchronizeDatabase(MySqlClient, Item.Value);
                     }
-
-                    if (WritebackCopy.Count > 0)
-                    {
-                        using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
-                        {
-                            foreach (KeyValuePair<Item, bool> Item in WritebackCopy)
-                            {
-                                Item.Key.SynchronizeDatabase(MySqlClient, Item.Value);
-                            }
-                        }
-                    }
-
-                    // Actorcount writebacks
-                    List<RoomInstance> InstanceCopy = new List<RoomInstance>();
-
-                    lock (mRoomInstances)
-                    {
-                        foreach (RoomInstance CopyItem in mRoomInstances.Values)
-                        {
-                            InstanceCopy.Add(CopyItem);
-                        }
-                    }
-
-                    foreach (RoomInstance Instance in InstanceCopy)
-                    {
-                        if (Instance.ActorCountDatabaseWritebackNeeded)
-                        {
-                            Instance.DoActorCountSync();
-                        }
-                    }
-
-                    // Pet writebacks
-                    List<Pet> PetWritebackCopy = new List<Pet>();
-
-                    lock (mWritebackPets)
-                    {
-                        foreach (Pet CopyItem in mWritebackPets)
-                        {
-                            PetWritebackCopy.Add(CopyItem);
-                        }
-
-                        mWritebackPets.Clear();
-                    }
-
-                    if (PetWritebackCopy.Count > 0)
-                    {
-                        using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
-                        {
-                            foreach (Pet Pet in PetWritebackCopy)
-                            {
-                                Pet.SynchronizeDatabase(MySqlClient);
-                            }
-                        }
-                    }
-
-                    Thread.Sleep(7500);
                 }
             }
-            catch (ThreadAbortException) { }
-            catch (ThreadInterruptedException) { }
+
+            // Actorcount writebacks
+            List<RoomInstance> InstanceCopy = new List<RoomInstance>();
+
+            lock (mRoomInstances)
+            {
+                foreach (RoomInstance CopyItem in mRoomInstances.Values)
+                {
+                    InstanceCopy.Add(CopyItem);
+                }
+            }
+
+            foreach (RoomInstance Instance in InstanceCopy)
+            {
+                if (Instance.ActorCountDatabaseWritebackNeeded)
+                {
+                    Instance.DoActorCountSync();
+                }
+            }
+
+            // Pet writebacks
+            List<Pet> PetWritebackCopy = new List<Pet>();
+
+            lock (mWritebackPets)
+            {
+                foreach (Pet CopyItem in mWritebackPets)
+                {
+                    PetWritebackCopy.Add(CopyItem);
+                }
+
+                mWritebackPets.Clear();
+            }
+
+            if (PetWritebackCopy.Count > 0)
+            {
+                using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    foreach (Pet Pet in PetWritebackCopy)
+                    {
+                        Pet.SynchronizeDatabase(MySqlClient);
+                    }
+                }
+            }
         }
 
         public static void MarkWriteback(Pet Pet)

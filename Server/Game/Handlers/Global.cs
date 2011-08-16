@@ -17,6 +17,14 @@ namespace Snowlight.Game.Handlers
             DataRouter.RegisterHandler(OpcodesIn.SESSION_DEBUG_EVENT, new ProcessRequestCallback(OnDebugEvent), true);
             DataRouter.RegisterHandler(OpcodesIn.SESSION_CLIENT_CONFIGURATION, new ProcessRequestCallback(OnClientConfig));
             DataRouter.RegisterHandler(OpcodesIn.SESSION_DISCONNECT_EVENT, new ProcessRequestCallback(OnClientDisconnectNotification), true);
+
+            // com.sulake.habbo.communication.messages.outgoing.sound.GetSoundSettingsComposer;
+            // this is used for the sound settings, you need to return the volume settings via this request!
+            DataRouter.RegisterHandler(228, new ProcessRequestCallback(OnGetSoundSettings));
+
+            // com.sulake.habbo.communication.messages.outgoing.users.GetMOTDMessageComposer;
+            // this is the call used to "display" the MOTD. Should be responded via this request.
+            DataRouter.RegisterHandler(3110, new ProcessRequestCallback(OnGetMotdMessage));
         }
 
         private static void OnSessionPong(Session Session, ClientMessage Message)
@@ -72,6 +80,16 @@ namespace Snowlight.Game.Handlers
         private static void OnClientDisconnectNotification(Session Session, ClientMessage Message)
         {
             SessionManager.StopSession(Session.Id);
+        }
+
+        private static void OnGetSoundSettings(Session Session, ClientMessage Message)
+        {
+            Session.SendData(SoundSettingsComposer.Compose(Session.CharacterInfo.ConfigVolume, false));
+        }
+
+        private static void OnGetMotdMessage(Session Session, ClientMessage Message)
+        {
+            Session.SendData(MessageOfTheDayComposer.Compose("Welcome to uberHotel.org BETA.\n\n\nThank you for participating in the uberHotel.org BETA test. We hope to gather relevant feedback and ideas to help make this hotel into a success.\n\nPlease submit any bugs, feedback, or ideas via:\nhttp://snowlight.uservoice.com\n\n\nHave fun, and thank you for joining us!"));
         }
     }
 }

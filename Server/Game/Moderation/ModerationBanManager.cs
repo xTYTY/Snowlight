@@ -11,7 +11,7 @@ namespace Snowlight.Game.Moderation
     {
         private static List<uint> mCharacterBlacklist;
         private static List<string> mRemoteAddressBlacklist;
-        private static Thread mWorkerThread;
+        private static Timer mWorker;
         private static object mSyncRoot;
 
         public static void Initialize(SqlDatabaseClient MySqlClient)
@@ -20,30 +20,17 @@ namespace Snowlight.Game.Moderation
             mRemoteAddressBlacklist = new List<string>();
             mSyncRoot = new object();
 
-            mWorkerThread = new Thread(new ThreadStart(ProcessThread));
-            mWorkerThread.Name = "ModerationBanManager";
-            mWorkerThread.Priority = ThreadPriority.Lowest;
-            mWorkerThread.Start();
+            mWorker = new Timer(new TimerCallback(ProcessThread), null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
 
             ReloadCache(MySqlClient);
         }
 
-        public static void ProcessThread()
+        public static void ProcessThread(object state)
         {
-            try
+            using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
             {
-                while (Program.Alive)
-                {
-                    Thread.Sleep(600000);
-
-                    using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
-                    {
-                        ReloadCache(MySqlClient);
-                    }
-                }
+                ReloadCache(MySqlClient);
             }
-            catch (ThreadAbortException) { }
-            catch (ThreadInterruptedException) { }
         }
 
         public static void ReloadCache(SqlDatabaseClient MySqlClient)

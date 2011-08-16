@@ -13,7 +13,9 @@ namespace Snowlight.Game.Misc
 {
     public static class ActivityPointsWorker
     {
-        private static Thread mWorkerThread;
+        private static int Interval;
+        private static int Amount;
+        private static Timer mWorker;
 
         public static void Initialize()
         {
@@ -21,57 +23,43 @@ namespace Snowlight.Game.Misc
             {
                 return;
             }
+            
+            Interval = (int)ConfigManager.GetValue("activitypoints.interval");
+            Amount = (int)ConfigManager.GetValue("activitypoints.amount");
 
-            mWorkerThread = new Thread(new ThreadStart(ProcessThread));
-            mWorkerThread.Priority = ThreadPriority.Lowest;
-            mWorkerThread.Name = "ActivityPointsWorkerThread";
-            mWorkerThread.Start();
+            mWorker = new Timer(new TimerCallback(ProcessThread), null, TimeSpan.FromSeconds(60), TimeSpan.FromSeconds(30));
         }
 
         public static void Stop()
         {
-            if (mWorkerThread != null)
+            if (mWorker != null)
             {
-                mWorkerThread.Abort();
-                mWorkerThread = null;
+                mWorker.Dispose();
+                mWorker = null;
             }
         }
 
-        private static void ProcessThread()
+        private static void ProcessThread(object state)
         {
-            try
+            Dictionary<uint, Session> Sessions = SessionManager.Sessions;
+
+            if (Sessions.Count > 0)
             {
-                int Interval = (int)ConfigManager.GetValue("activitypoints.interval");
-                int Amount = (int)ConfigManager.GetValue("activitypoints.amount");
-
-                Thread.Sleep(60000);
-
-                while (Program.Alive)
+                using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    Dictionary<uint, Session> Sessions = SessionManager.Sessions;
-
-                    if (Sessions.Count > 0)
+                    foreach (Session Session in Sessions.Values)
                     {
-                        using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
+                        if (!Session.Authenticated || Session.CharacterInfo.TimeSinceLastActivityPointsUpdate <= Interval)
                         {
-                            foreach (Session Session in Sessions.Values)
-                            {
-                                if (!Session.Authenticated || Session.CharacterInfo.TimeSinceLastActivityPointsUpdate <= Interval)
-                                {
-                                    continue;
-                                }
-
-                                Session.CharacterInfo.UpdateActivityPointsBalance(MySqlClient, Amount);
-                                Session.SendData(ActivityPointsBalanceComposer.Compose(Session.CharacterInfo.ActivityPointsBalance, Amount));
-                                Session.CharacterInfo.SetLastActivityPointsUpdate(MySqlClient);
-                            }
+                            continue;
                         }
-                    }
 
-                    Thread.Sleep((Interval / 5) * 1000);
+                        Session.CharacterInfo.UpdateActivityPointsBalance(MySqlClient, Amount);
+                        Session.SendData(ActivityPointsBalanceComposer.Compose(Session.CharacterInfo.ActivityPointsBalance, Amount));
+                        Session.CharacterInfo.SetLastActivityPointsUpdate(MySqlClient);
+                    }
                 }
             }
-            catch (ThreadAbortException) { }
         }
     }
 }

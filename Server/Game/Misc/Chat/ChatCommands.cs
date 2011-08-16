@@ -32,6 +32,19 @@ namespace Snowlight.Game.Misc
                         Session.SendData(NotificationMessageComposer.Compose("The following commands are available to regular users:\n\n:commands\n:online\n:about\n:pickall"));
                         return true;
                     }
+                case "update_catalog":
+                    {
+                        if (!Session.HasRight("hotel_admin"))
+                        {
+                            return false;
+                        }
+                        using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
+                        {
+                            Snowlight.Game.Catalog.CatalogManager.RefreshCatalogData(MySqlClient);
+                        }
+                        Session.SendData(NotificationMessageComposer.Compose("Catalog reloaded"));
+                        return true;
+                    }
                 case "online":
                     {
                         List<string> OnlineUsers = SessionManager.ConnectedUserData.Values.ToList();

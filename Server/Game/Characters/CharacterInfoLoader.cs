@@ -14,48 +14,35 @@ namespace Snowlight.Game.Characters
         private const double CACHE_LIFE_TIME = 300;
 
         private static Dictionary<uint, CharacterInfo> mCharacterInfoCache;
-        private static Thread mCacheMonitorThread;
+        private static Timer mCacheMonitor;
 
         public static void Initialize()
         {
             mCharacterInfoCache = new Dictionary<uint, CharacterInfo>();
 
-            mCacheMonitorThread = new Thread(new ThreadStart(MonitorCache));
-            mCacheMonitorThread.Name = "CharacterInfoLoader Cache Monitor";
-            mCacheMonitorThread.Priority = ThreadPriority.Lowest;
-            mCacheMonitorThread.Start();
+            mCacheMonitor = new Timer(new TimerCallback(MonitorCache), null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(30));
         }
 
-        private static void MonitorCache()
+        private static void MonitorCache(object state)
         {
-            try
+            lock (mCharacterInfoCache)
             {
-                while (Program.Alive)
+                List<uint> ToRemove = new List<uint>();
+
+                foreach (CharacterInfo Info in mCharacterInfoCache.Values)
                 {
-                    lock (mCharacterInfoCache)
+                    if (SessionManager.ContainsCharacterId(Info.Id) || Info.CacheAge >= CACHE_LIFE_TIME)
                     {
-                        List<uint> ToRemove = new List<uint>();
-
-                        foreach (CharacterInfo Info in mCharacterInfoCache.Values)
-                        {
-                            if (SessionManager.ContainsCharacterId(Info.Id) || Info.CacheAge >= CACHE_LIFE_TIME)
-                            {
-                                ToRemove.Add(Info.Id);
-                                continue;
-                            }
-                        }
-
-                        foreach (uint RemoveUid in ToRemove)
-                        {
-                            mCharacterInfoCache.Remove(RemoveUid);
-                        }
+                        ToRemove.Add(Info.Id);
+                        continue;
                     }
+                }
 
-                    Thread.Sleep(30000);
+                foreach (uint RemoveUid in ToRemove)
+                {
+                    mCharacterInfoCache.Remove(RemoveUid);
                 }
             }
-            catch (ThreadAbortException) { }
-            catch (ThreadInterruptedException) { }
         }
 
         private static CharacterInfo TryGetInfoFromCache(uint CharacterId)

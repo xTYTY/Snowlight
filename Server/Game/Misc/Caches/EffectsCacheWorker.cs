@@ -10,39 +10,26 @@ namespace Snowlight.Game.Misc
 {
     public static class EffectsCacheWorker
     {
-        private static Thread mWorkerThread;
+        private static Timer mWorker;
 
         public static void Initialize()
         {
-            mWorkerThread = new Thread(new ThreadStart(ProcessThread));
-            mWorkerThread.Priority = ThreadPriority.Lowest;
-            mWorkerThread.Name = "EffectsCacheWorker";
-            mWorkerThread.Start();
+            mWorker = new Timer(new TimerCallback(ProcessThread), null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
         }
 
-        private static void ProcessThread()
+        private static void ProcessThread(object state)
         {
-            try
+            Dictionary<uint, Session> Sessions = SessionManager.Sessions;
+
+            foreach (Session Session in Sessions.Values)
             {
-                while (Program.Alive)
+                if (Session.Stopped || !Session.Authenticated || Session.AvatarEffectCache == null)
                 {
-                    Dictionary<uint, Session> Sessions = SessionManager.Sessions;
-
-                    foreach (Session Session in Sessions.Values)
-                    {
-                        if (Session.Stopped || !Session.Authenticated || Session.AvatarEffectCache == null)
-                        {
-                            continue;
-                        }
-
-                        Session.AvatarEffectCache.CheckEffectExpiry(Session);
-                    }
-
-                    Thread.Sleep(5000);
+                    continue;
                 }
+
+                Session.AvatarEffectCache.CheckEffectExpiry(Session);
             }
-            catch (ThreadAbortException) { }
-            catch (ThreadInterruptedException) { }
         }
     }
 }

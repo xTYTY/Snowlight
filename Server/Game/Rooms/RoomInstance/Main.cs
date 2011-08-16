@@ -5,6 +5,8 @@ using System.Text;
 using System.Linq;
 using System.Data;
 
+using System.Threading;
+
 using Snowlight.Specialized;
 using Snowlight.Game.Sessions;
 using Snowlight.Communication;
@@ -189,6 +191,8 @@ namespace Snowlight.Game.Rooms
             }
 
             RegenerateRelativeHeightmap();
+
+            mUpdater = new Timer(new TimerCallback(PerformUpdate), null, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500));
         }
 
         public static RoomInstance TryCreateRoomInstance(uint InstanceId, uint RoomId)
@@ -241,6 +245,8 @@ namespace Snowlight.Game.Rooms
                 Unload();
             }
 
+            mUpdater.Dispose();
+            mUpdater = null;
             mInfo = null;
         }
     }

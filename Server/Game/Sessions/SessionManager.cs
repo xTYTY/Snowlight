@@ -14,8 +14,8 @@ namespace Snowlight.Game.Sessions
         private static Dictionary<uint, Session> mSessions;
         private static uint mCounter;
         private static List<uint> mSessionsToStop;
-        private static Thread mMonitorThread;
-        private static Thread mLatencyTestThread;
+        private static Timer mMonitorThread;
+        private static Timer mLatencyTestThread;
         private static object mSyncRoot;
 
         public static Dictionary<uint, Session> Sessions
@@ -81,129 +81,102 @@ namespace Snowlight.Game.Sessions
             mSessionsToStop = new List<uint>();
             mCounter = 0;
 
-            mMonitorThread = new Thread(new ThreadStart(ExecuteMonitor));
-            mMonitorThread.Priority = ThreadPriority.BelowNormal;
-            mMonitorThread.Name = "GameClientMonitor";
-            mMonitorThread.Start();
-
-            mLatencyTestThread = new Thread(new ThreadStart(ExecuteLatencyMonitor));
-            mLatencyTestThread.Priority = ThreadPriority.Lowest;
-            mLatencyTestThread.Name = "SessionLatencyTester";
-            mLatencyTestThread.Start();
+            mMonitorThread = new Timer(new TimerCallback(ExecuteMonitor), null, TimeSpan.FromMilliseconds(300), TimeSpan.FromMilliseconds(300));
+            mLatencyTestThread = new Timer(new TimerCallback(ExecuteLatencyMonitor), null, TimeSpan.FromSeconds(35), TimeSpan.FromSeconds(35));
 
             mSyncRoot = new object();
         }
 
-        private static void ExecuteMonitor()
+        private static void ExecuteMonitor(object state)
         {
-            try
+            List<Session> ToDispose = new List<Session>();
+            List<Session> ToStop = new List<Session>();
+
+            lock (mSessions)
             {
-                while (Program.Alive)
+                lock (mSessionsToStop)
                 {
-                    List<Session> ToDispose = new List<Session>();
-                    List<Session> ToStop = new List<Session>();
-
-                    lock (mSessions)
+                    foreach (uint SessionId in mSessionsToStop)
                     {
-                        lock (mSessionsToStop)
+                        if (mSessions.ContainsKey(SessionId))
                         {
-                            foreach (uint SessionId in mSessionsToStop)
-                            {
-                                if (mSessions.ContainsKey(SessionId))
-                                {
-                                    ToStop.Add(mSessions[SessionId]);
-                                }
-                            }
-
-                            mSessionsToStop.Clear();
-                        }
-
-                        foreach (Session Session in mSessions.Values)
-                        {
-                            if (ToStop.Contains(Session))
-                            {
-                                continue;
-                            }
-
-                            if (Session.Stopped)
-                            {
-                                if (Session.TimeStopped > 15)
-                                {
-                                    ToDispose.Add(Session);
-                                }
-
-                                continue;
-                            }
+                            ToStop.Add(mSessions[SessionId]);
                         }
                     }
 
-                    if (ToStop.Count > 0)
+                    mSessionsToStop.Clear();
+                }
+
+                foreach (Session Session in mSessions.Values)
+                {
+                    if (ToStop.Contains(Session))
                     {
-                        using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
-                        {
-                            foreach (Session SessionStop in ToStop)
-                            {
-                                SessionStop.Stop(MySqlClient);
-                            }
-                        }
+                        continue;
                     }
 
-                    foreach (Session SessionDispose in ToDispose)
+                    if (Session.Stopped)
                     {
-                        SessionDispose.Dispose();
-
-                        lock (mSessions)
+                        if (Session.TimeStopped > 15)
                         {
-                            if (mSessions.ContainsKey(SessionDispose.Id))
-                            {
-                                mSessions.Remove(SessionDispose.Id);
-                            }
+                            ToDispose.Add(Session);
                         }
-                    }
 
-                    Thread.Sleep(100);
+                        continue;
+                    }
                 }
             }
-            catch (ThreadAbortException) { }
-            catch (ThreadInterruptedException) { }
+
+            if (ToStop.Count > 0)
+            {
+                using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    foreach (Session SessionStop in ToStop)
+                    {
+                        SessionStop.Stop(MySqlClient);
+                    }
+                }
+            }
+
+            foreach (Session SessionDispose in ToDispose)
+            {
+                SessionDispose.Dispose();
+
+                lock (mSessions)
+                {
+                    if (mSessions.ContainsKey(SessionDispose.Id))
+                    {
+                        mSessions.Remove(SessionDispose.Id);
+                    }
+                }
+            }
         }
 
-        private static void ExecuteLatencyMonitor()
+        private static void ExecuteLatencyMonitor(object state)
         {
-            try
+            ServerMessage PingMessage = PingComposer.Compose();
+
+            lock (mSessions)
             {
-                while (Program.Alive)
+                lock (mSessionsToStop)
                 {
-                    ServerMessage PingMessage = PingComposer.Compose();
-
-                    lock (mSessions)
+                    foreach (Session Session in mSessions.Values)
                     {
-                        lock (mSessionsToStop)
+                        if (Session.Stopped || mSessionsToStop.Contains(Session.Id))
                         {
-                            foreach (Session Session in mSessions.Values)
-                            {
-                                if (Session.Stopped || mSessionsToStop.Contains(Session.Id))
-                                {
-                                    continue;
-                                }
-
-                                if (!Session.LatencyTestOk)
-                                {
-                                    mSessionsToStop.Add(Session.Id);
-                                    continue;
-                                }
-
-                                Session.LatencyTestOk = false;
-                                Session.SendData(PingMessage);
-                            }
+                            continue;
                         }
-                    }
 
-                    Thread.Sleep(45000);
+                        if (!Session.LatencyTestOk)
+                        {
+                            mSessionsToStop.Add(Session.Id);
+                            continue;
+                        }
+
+                        Session.LatencyTestOk = false;
+                        Session.SendData(PingMessage);
+                    }
                 }
             }
-            catch (ThreadAbortException) { }
-            catch (ThreadInterruptedException) { }
         }
 
         public static void StopSession(uint SessionId)
@@ -287,7 +260,7 @@ namespace Snowlight.Game.Sessions
         {
             bool Reject = ModerationBanManager.IsRemoteAddressBlacklisted(IncomingSocket.RemoteEndPoint.ToString().Split(':')[0]);
 
-            Output.WriteLine((Reject ? "Rejected" : "Accepted") + " incoming connection from " + IncomingSocket.RemoteEndPoint.ToString() + ".",
+            Output.WriteLine((Reject ? "Rejected" : "Accepted") + " incoming connection from " + IncomingSocket.RemoteEndPoint.ToString().Split(':')[0] + ".",
                 OutputLevel.Informational);
 
             if (Reject)

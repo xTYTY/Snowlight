@@ -15,6 +15,8 @@ namespace Snowlight.Storage
         private static int mPoolLifetime;
         private static int mClientIdGenerator;
         private static object mSyncRoot;
+        private static ManualResetEvent mPoolWait;
+        private static Timer mMonitorThread;
 
         public static int ClientCount
         {
@@ -31,11 +33,9 @@ namespace Snowlight.Storage
             mMaxPoolSize = (int)ConfigManager.GetValue("mysql.pool.max");
             mPoolLifetime = (int)ConfigManager.GetValue("mysql.pool.lifetime");
             mSyncRoot = new object();
+            mPoolWait = new ManualResetEvent(true);
 
-            Thread MonitorThread = new Thread(new ThreadStart(ProcessMonitorThread));
-            MonitorThread.Priority = ThreadPriority.Lowest;
-            MonitorThread.Name = "SqlMonitor";
-            MonitorThread.Start();
+            mMonitorThread = new Timer(new TimerCallback(ProcessMonitorThread), null, mPoolLifetime / 2, mPoolLifetime / 2);
 
             if (mMinPoolSize < 0)
             {
@@ -80,39 +80,34 @@ namespace Snowlight.Storage
             }          
         }
 
-        public static void ProcessMonitorThread()
+        public static void ProcessMonitorThread(object state)
         {
-            while (Program.Alive)
+            if (ClientCount > mMinPoolSize)
             {
-                if (ClientCount > mMinPoolSize)
+                lock (mSyncRoot)
                 {
-                    lock (mSyncRoot)
+                    List<int> ToDisconnect = new List<int>();
+
+                    foreach (SqlDatabaseClient Client in mClients.Values)
                     {
-                        List<int> ToDisconnect = new List<int>();
-                        
-                        foreach (SqlDatabaseClient Client in mClients.Values)
+                        if (Client.Available && Client.TimeInactive >= mPoolLifetime)
                         {
-                            if (Client.Available && Client.TimeInactive >= mPoolLifetime)
-                            {
-                                ToDisconnect.Add(Client.Id);
-                            }
-                        }
-
-                        foreach (int DisconnectId in ToDisconnect)
-                        {
-                            mClients[DisconnectId].Close();
-                            mClients.Remove(DisconnectId);
-                        }
-
-                        if (ToDisconnect.Count > 0)
-                        {
-                            Output.WriteLine("(Sql) Disconnected " + ToDisconnect.Count + " inactive client(s).",
-                                OutputLevel.DebugInformation);
+                            ToDisconnect.Add(Client.Id);
                         }
                     }
-                }
 
-                Thread.Sleep(mPoolLifetime / 2);
+                    foreach (int DisconnectId in ToDisconnect)
+                    {
+                        mClients[DisconnectId].Close();
+                        mClients.Remove(DisconnectId);
+                    }
+
+                    if (ToDisconnect.Count > 0)
+                    {
+                        Output.WriteLine("(Sql) Disconnected " + ToDisconnect.Count + " inactive client(s).",
+                            OutputLevel.DebugInformation);
+                    }
+                }
             }
         }
 
@@ -194,7 +189,10 @@ namespace Snowlight.Storage
 
         public static void PokeAllAwaiting()
         {
-            Monitor.PulseAll(mSyncRoot);
+            lock (mSyncRoot)
+            {
+                Monitor.PulseAll(mSyncRoot);
+            }
         }
 
         private static int GenerateClientId()

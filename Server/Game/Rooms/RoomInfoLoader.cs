@@ -12,48 +12,35 @@ namespace Snowlight.Game.Rooms
         private const double CACHE_LIFE_TIME = 300;
 
         private static Dictionary<uint, RoomInfo> mRoomInfoCache;
-        private static Thread mCacheMonitorThread;
+        private static Timer mCacheMonitor;
 
         public static void Initialize()
         {
             mRoomInfoCache = new Dictionary<uint, RoomInfo>();
 
-            mCacheMonitorThread = new Thread(new ThreadStart(MonitorCache));
-            mCacheMonitorThread.Name = "RoomInfoLoader Cache Monitor";
-            mCacheMonitorThread.Priority = ThreadPriority.Lowest;
-            mCacheMonitorThread.Start();
+            mCacheMonitor = new Timer(new TimerCallback(MonitorCache), null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
         }
 
-        private static void MonitorCache()
+        private static void MonitorCache(object state)
         {
-            try
+            lock (mRoomInfoCache)
             {
-                while (Program.Alive)
+                List<uint> ToRemove = new List<uint>();
+
+                foreach (RoomInfo Info in mRoomInfoCache.Values)
                 {
-                    lock (mRoomInfoCache)
+                    if (RoomManager.GetInstanceByRoomId(Info.Id) != null || Info.CacheAge >= CACHE_LIFE_TIME)
                     {
-                        List<uint> ToRemove = new List<uint>();
-
-                        foreach (RoomInfo Info in mRoomInfoCache.Values)
-                        {
-                            if (RoomManager.GetInstanceByRoomId(Info.Id) != null || Info.CacheAge >= CACHE_LIFE_TIME)
-                            {
-                                ToRemove.Add(Info.Id);
-                                continue;
-                            }
-                        }
-
-                        foreach (uint RemoveUid in ToRemove)
-                        {
-                            mRoomInfoCache.Remove(RemoveUid);
-                        }
+                        ToRemove.Add(Info.Id);
+                        continue;
                     }
+                }
 
-                    Thread.Sleep(30000);
+                foreach (uint RemoveUid in ToRemove)
+                {
+                    mRoomInfoCache.Remove(RemoveUid);
                 }
             }
-            catch (ThreadAbortException) { }
-            catch (ThreadInterruptedException) { }
         }
 
         public static void RemoveFromCache(uint RoomId)

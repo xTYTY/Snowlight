@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Net;
+using System.Threading;
 
 using Snowlight.Communication.Incoming;
 using Snowlight.Config;
@@ -68,6 +69,8 @@ namespace Snowlight
                 Output.WriteLine("Command line argument: " + arg);
                 Input.ProcessInput(arg.Split(' '));
             }
+
+            ThreadPool.SetMinThreads(10, 10);
 
             try
             {

@@ -144,6 +144,7 @@
     <Compile Include="Communication\Outgoing\Moderation\HelpCfhDeletedOkComposer.cs" />
     <Compile Include="Communication\Outgoing\Moderation\HelpHomepageComposer.cs" />
     <Compile Include="Communication\Outgoing\Moderation\HelpSearchResultsComposer.cs" />
+    <Compile Include="Communication\Outgoing\Errors\ErrorsComposer.cs" />
     <Compile Include="Communication\Outgoing\Moderation\HelpSubmitCfhResultComposer.cs" />
     <Compile Include="Communication\Outgoing\Moderation\HelpTopicComposer.cs" />
     <Compile Include="Communication\Outgoing\Moderation\HelpTopicListComposer.cs" />

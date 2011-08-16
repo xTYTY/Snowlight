@@ -445,6 +445,7 @@ namespace Snowlight.Game.Messenger
         private static void GetEventStream(Session Session, ClientMessage Message)
         {
             // TODO: Code this here..
+            Session.SendData(EventStreamComposer.Compose());
         }
 
         private static void GetEventStreamAllowed(Session Session, ClientMessage Message)

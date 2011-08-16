@@ -238,7 +238,7 @@
     <Compile Include="Communication\Outgoing\Rooms\TradeOffersComposer.cs" />
     <Compile Include="Communication\Outgoing\User\ActivityPointsBalanceComposer.cs" />
     <Compile Include="Communication\Outgoing\Handshake\AuthenticationOkComposer.cs" />
-    <Compile Include="Communication\Outgoing\User\ClientConfigComposer.cs" />
+    <Compile Include="Communication\Outgoing\User\SoundSettingsComposer.cs" />
     <Compile Include="Communication\Outgoing\User\CreditsBalanceComposer.cs" />
     <Compile Include="Communication\Outgoing\User\FuseRightsListComposer.cs" />
     <Compile Include="Communication\Outgoing\User\GenericErrorComposer.cs" />

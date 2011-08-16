@@ -14,10 +14,6 @@ namespace Snowlight.Game.Handlers
             // used for badge point limits?? what is this anyone know??
             DataRouter.RegisterHandler(3032, new ProcessRequestCallback(SurpressingHandler));
 
-            // com.sulake.habbo.communication.messages.outgoing.sound.GetSoundSettingsComposer;
-            // this is used for the sound settings, you need to return the volume settings via this request!
-            DataRouter.RegisterHandler(228, new ProcessRequestCallback(SurpressingHandler));
-
             // com.sulake.habbo.communication.messages.outgoing.users.GetMOTDMessageComposer;
             // this is the call used to "display" the MOTD. Should be responded via this request.
             DataRouter.RegisterHandler(3110, new ProcessRequestCallback(SurpressingHandler));

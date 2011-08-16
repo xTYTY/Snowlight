@@ -17,6 +17,10 @@ namespace Snowlight.Game.Handlers
             DataRouter.RegisterHandler(OpcodesIn.SESSION_DEBUG_EVENT, new ProcessRequestCallback(OnDebugEvent), true);
             DataRouter.RegisterHandler(OpcodesIn.SESSION_CLIENT_CONFIGURATION, new ProcessRequestCallback(OnClientConfig));
             DataRouter.RegisterHandler(OpcodesIn.SESSION_DISCONNECT_EVENT, new ProcessRequestCallback(OnClientDisconnectNotification), true);
+
+            // com.sulake.habbo.communication.messages.outgoing.sound.GetSoundSettingsComposer;
+            // this is used for the sound settings, you need to return the volume settings via this request!
+            DataRouter.RegisterHandler(228, new ProcessRequestCallback(OnGetSoundSettings));
         }
 
         private static void OnSessionPong(Session Session, ClientMessage Message)
@@ -72,6 +76,11 @@ namespace Snowlight.Game.Handlers
         private static void OnClientDisconnectNotification(Session Session, ClientMessage Message)
         {
             SessionManager.StopSession(Session.Id);
+        }
+
+        private static void OnGetSoundSettings(Session Session, ClientMessage Message)
+        {
+            Session.SendData(SoundSettingsComposer.Compose(Session.CharacterInfo.ConfigVolume, false));
         }
     }
 }

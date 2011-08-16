@@ -432,8 +432,6 @@ namespace Snowlight.Game.Sessions
                 SendData(InfoFeedEnableMessageComposer.Compose(1));
                 SendData(ActivityPointsMessageComposer.Compose());
 
-                SendData(ClientConfigComposer.Compose(CharacterInfo.ConfigVolume, false));
-
                 if (HasRight("moderation_tool"))
                 {
                     SendData(ModerationToolComposer.Compose(this, ModerationPresets.UserMessagePresets,

@@ -2,7 +2,7 @@
 
 namespace Snowlight.Communication.Outgoing
 {
-    public static class ClientConfigComposer
+    public static class SoundSettingsComposer
     {
         public static ServerMessage Compose(int Volume, bool UnknownConfigValue1)
         {

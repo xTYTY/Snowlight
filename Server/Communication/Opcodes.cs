@@ -181,6 +181,7 @@ namespace Snowlight.Communication
         public const uint INVENTORY_NEW_ITEM = 832;
         public const uint MESSENGER_FRIEND_EVENT = 833;
         public const uint ACHIEVEMENTS_PROGRESS_UPDATE = 913;
+        public const uint ERROR_NOTIFICATION = 299;
     }
 
     public static class OpcodesIn

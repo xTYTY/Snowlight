@@ -54,7 +54,7 @@ namespace Snowlight.Game.Rooms
 
             ReloadModels(MySqlClient);
 
-            mRoomInstanceThread = new Timer(new TimerCallback(ProcessRooms), null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
+            mRoomInstanceThread = new Timer(new TimerCallback(ProcessRooms), null, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10));
             mRoomWritebackThread = new Timer(new TimerCallback(ProcessWritebacks), null, TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(10));
 
             mInstanceIdGenerator = 1;
@@ -133,7 +133,7 @@ namespace Snowlight.Game.Rooms
                 }
                 else if (Instance.HumanActorCount == 0)
                 {
-                    if (Instance.MarkedAsEmpty >= 10)
+                    if (Instance.MarkedAsEmpty >= 1) // 1 = 10 seconds because this method runs every 10 seconds
                     {
                         ToUnload.Add(Instance.InstanceId);
                     }

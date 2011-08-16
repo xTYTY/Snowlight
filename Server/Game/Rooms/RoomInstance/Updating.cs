@@ -19,6 +19,8 @@ namespace Snowlight.Game.Rooms
 
         public void PerformUpdate(object state)
         {
+            //Console.WriteLine(Thread.CurrentThread.ManagedThreadId); // use this only to debug threadpooling...
+
             List<RoomActor> ActorsToUpdate = new List<RoomActor>();
             List<RoomActor> ActorsToRemove = new List<RoomActor>();
 

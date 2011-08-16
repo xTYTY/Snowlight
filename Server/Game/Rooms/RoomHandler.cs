@@ -1241,8 +1241,13 @@ namespace Snowlight.Game.Rooms
             {
                 Navigator.AddRoomToStaffPicked(Instance.RoomId);
                 Session.SendData(NotificationMessageComposer.Compose("This room has been added to the staff picked rooms successfully."));
-
+                
                 // todo: unlock achievement for room owner
+                using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
+                {
+                    Session TargetSession = SessionManager.GetSessionByCharacterId(CharacterResolverCache.GetUidFromName(Instance.Info.OwnerName));
+                    AchievementManager.ProgressUserAchievement(MySqlClient, TargetSession, "ACH_Spr", 1);
+                }
             }
             else
             {

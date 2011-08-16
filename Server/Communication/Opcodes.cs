@@ -183,6 +183,7 @@ namespace Snowlight.Communication
         public const uint ACHIEVEMENTS_PROGRESS_UPDATE = 913;
         public const uint ERROR_NOTIFICATION = 299;
         public const uint GET_STREAM_EVENT = 950;
+        public const uint INFO_FEED_ENABLE = 517;
     }
 
     public static class OpcodesIn

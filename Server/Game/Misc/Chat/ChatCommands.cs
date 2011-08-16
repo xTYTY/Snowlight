@@ -29,8 +29,15 @@ namespace Snowlight.Game.Misc
             {
                 case "commands":
                     {
+                        if(Session.HasRight("hotel_admin"))
+                        {
+                            Session.SendData(NotificationMessageComposer.Compose("The following commands are available to admin users:\n\n:commands\n:online\n:about\n:pickall\n-----\n:update_catalog\n:superkick\n:kick\n:roomunmute\n:roommute\n:unmute\n:mute\n:clipping\n:emptyinv\n:t"));
+                        }                        
+                        else
+                        {
                         Session.SendData(NotificationMessageComposer.Compose("The following commands are available to regular users:\n\n:commands\n:online\n:about\n:pickall"));
-                        return true;
+                        }
+                            return true;
                     }
                 case "update_catalog":
                     {

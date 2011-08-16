@@ -107,7 +107,7 @@ function outputLogin()
 				exit;
 			}
 			
-			echo '<div class="notice"><p class="warn">Whoops! We didn\'t recognise your username or password. Please try again.'.$pwd.'</p></div>';
+			echo '<div class="notice"><p class="warn">Whoops! We didn\'t recognise your username or password. Please try again.</p></div>';
 		}
 	}	
 	

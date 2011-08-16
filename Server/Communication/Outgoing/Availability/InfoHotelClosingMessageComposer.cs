@@ -7,10 +7,12 @@ namespace Snowlight.Communication.Outgoing
 {
     public static class InfoHotelClosingMessageComposer
     {
-        public static ServerMessage Compose()
+        public static ServerMessage Compose(int ShuttingDownInMinutes)
         {
             // com.sulake.habbo.communication.messages.incoming.availability.InfoHotelClosingMessageEvent;
-            return new ServerMessage(291);
+            ServerMessage Message = new ServerMessage(291);
+            Message.AppendInt32(ShuttingDownInMinutes);
+            return Message;
         }
     }
 }

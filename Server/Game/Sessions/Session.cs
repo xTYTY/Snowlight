@@ -425,7 +425,6 @@ namespace Snowlight.Game.Sessions
                 SendData(UserEffectListComposer.Compose(AvatarEffectCache.Effects));
                 SendData(NavigatorFavoriteRoomsComposer.Compose(FavoriteRoomsCache.FavoriteRooms));
                 SendData(InventoryNewItemsComposer.Compose(NewItemsCache.NewItems));
-                SendData(MessageOfTheDayComposer.Compose("Welcome to uberHotel.org BETA.\n\n\nThank you for participating in the uberHotel.org BETA test. We hope to gather relevant feedback and ideas to help make this hotel into a success.\n\nPlease submit any bugs, feedback, or ideas via:\nhttp://snowlight.uservoice.com\n\n\nHave fun, and thank you for joining us!"));
                 SendData(AchievementDataListComposer.Compose(AchievementManager.Achievements.Values.ToList()));
 
                 SendData(AvailabilityStatusMessageComposer.Compose());

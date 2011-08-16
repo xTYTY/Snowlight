@@ -260,7 +260,7 @@ namespace Snowlight.Game.Sessions
         {
             bool Reject = ModerationBanManager.IsRemoteAddressBlacklisted(IncomingSocket.RemoteEndPoint.ToString().Split(':')[0]);
 
-            Output.WriteLine((Reject ? "Rejected" : "Accepted") + " incoming connection from " + IncomingSocket.RemoteEndPoint.ToString() + ".",
+            Output.WriteLine((Reject ? "Rejected" : "Accepted") + " incoming connection from " + IncomingSocket.RemoteEndPoint.ToString().Split(':')[0] + ".",
                 OutputLevel.Informational);
 
             if (Reject)

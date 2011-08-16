@@ -81,8 +81,8 @@ namespace Snowlight.Game.Sessions
             mSessionsToStop = new List<uint>();
             mCounter = 0;
 
-            mMonitorThread = new Timer(ExecuteMonitor, null, TimeSpan.FromMilliseconds(300), TimeSpan.FromMilliseconds(300));
-            mLatencyTestThread = new Timer(ExecuteLatencyMonitor, null, TimeSpan.FromSeconds(35), TimeSpan.FromSeconds(35));
+            mMonitorThread = new Timer(new TimerCallback(ExecuteMonitor), null, TimeSpan.FromMilliseconds(300), TimeSpan.FromMilliseconds(300));
+            mLatencyTestThread = new Timer(new TimerCallback(ExecuteLatencyMonitor), null, TimeSpan.FromSeconds(35), TimeSpan.FromSeconds(35));
 
             mSyncRoot = new object();
         }

@@ -29,7 +29,7 @@ namespace Snowlight.Game.Music
             mCacheTimer = new Dictionary<uint, double>();
             mSyncRoot = new object();
 
-            mCacheMonitor = new Timer(ProcessThread, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
+            mCacheMonitor = new Timer(new TimerCallback(ProcessThread), null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
 
             DataRouter.RegisterHandler(OpcodesIn.GET_MUSIC_DATA, new ProcessRequestCallback(GetSongData));
             DataRouter.RegisterHandler(OpcodesIn.JUKEBOX_PLAYLIST_ADD, new ProcessRequestCallback(AddToPlaylist));

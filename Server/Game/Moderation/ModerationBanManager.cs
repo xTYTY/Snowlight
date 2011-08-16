@@ -20,7 +20,7 @@ namespace Snowlight.Game.Moderation
             mRemoteAddressBlacklist = new List<string>();
             mSyncRoot = new object();
 
-            mWorker = new Timer(ProcessThread, null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
+            mWorker = new Timer(new TimerCallback(ProcessThread), null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
 
             ReloadCache(MySqlClient);
         }

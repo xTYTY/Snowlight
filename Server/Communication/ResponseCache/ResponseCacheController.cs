@@ -15,7 +15,7 @@ namespace Snowlight.Communication.ResponseCache
             mCacheItemLifetime = ItemLifetime;
             mCachedResponses = new List<ResponseCacheItem>();
 
-            mCacheMonitor = new Timer(ProcessCacheMonitor, null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(mCacheItemLifetime));
+            mCacheMonitor = new Timer(new TimerCallback(ProcessCacheMonitor), null, TimeSpan.FromSeconds(mCacheItemLifetime), TimeSpan.FromSeconds(mCacheItemLifetime));
         }
 
         public void Dispose()

@@ -498,8 +498,8 @@ namespace Snowlight.Game.Sessions
             {
                 if (mSocket != null)
                 {
-                    //Output.WriteLine("[SND][" + mId + "]: " + Constants.DefaultEncoding.GetString(Data),
-                    //    OutputLevel.DebugInformation);
+                    Output.WriteLine("[SND][" + mId + "]: " + Constants.DefaultEncoding.GetString(Data),
+                        OutputLevel.DebugInformation);
                     mSocket.BeginSend(Data, 0, Data.Length, SocketFlags.None, new AsyncCallback(OnDataSent), null);
                 }
             }
@@ -564,7 +564,7 @@ namespace Snowlight.Game.Sessions
 
                     if (Message != null)
                     {
-                        //Output.WriteLine("[RCV][" + mId + "]: " + Message.ToString(), OutputLevel.DebugInformation);
+                        Output.WriteLine("[RCV][" + mId + "]: " + Message.ToString(), OutputLevel.DebugInformation);
 
                         try
                         {

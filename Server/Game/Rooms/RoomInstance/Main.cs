@@ -192,7 +192,7 @@ namespace Snowlight.Game.Rooms
 
             RegenerateRelativeHeightmap();
 
-            mUpdater = new Timer(PerformUpdate, null, TimeSpan.FromMilliseconds(480), TimeSpan.FromMilliseconds(480));
+            mUpdater = new Timer(new TimerCallback(PerformUpdate), null, TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500));
         }
 
         public static RoomInstance TryCreateRoomInstance(uint InstanceId, uint RoomId)

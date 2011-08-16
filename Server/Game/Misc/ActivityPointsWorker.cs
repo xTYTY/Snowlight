@@ -27,7 +27,7 @@ namespace Snowlight.Game.Misc
             Interval = (int)ConfigManager.GetValue("activitypoints.interval");
             Amount = (int)ConfigManager.GetValue("activitypoints.amount");
 
-            mWorker = new Timer(ProcessThread, null, TimeSpan.FromSeconds(60), TimeSpan.FromSeconds(30));
+            mWorker = new Timer(new TimerCallback(ProcessThread), null, TimeSpan.FromSeconds(60), TimeSpan.FromSeconds(30));
         }
 
         public static void Stop()

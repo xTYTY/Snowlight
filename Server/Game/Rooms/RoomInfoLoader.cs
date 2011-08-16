@@ -18,7 +18,7 @@ namespace Snowlight.Game.Rooms
         {
             mRoomInfoCache = new Dictionary<uint, RoomInfo>();
 
-            mCacheMonitor = new Timer(MonitorCache, null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
+            mCacheMonitor = new Timer(new TimerCallback(MonitorCache), null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
         }
 
         private static void MonitorCache(object state)

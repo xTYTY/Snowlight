@@ -20,7 +20,7 @@ namespace Snowlight.Game.Characters
         {
             mCharacterInfoCache = new Dictionary<uint, CharacterInfo>();
 
-            mCacheMonitor = new Timer(MonitorCache, null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(30));
+            mCacheMonitor = new Timer(new TimerCallback(MonitorCache), null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(30));
         }
 
         private static void MonitorCache(object state)

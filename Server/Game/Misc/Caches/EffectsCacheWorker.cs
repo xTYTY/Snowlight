@@ -14,7 +14,7 @@ namespace Snowlight.Game.Misc
 
         public static void Initialize()
         {
-            mWorker = new Timer(ProcessThread, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
+            mWorker = new Timer(new TimerCallback(ProcessThread), null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
         }
 
         private static void ProcessThread(object state)

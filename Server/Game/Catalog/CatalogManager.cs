@@ -109,7 +109,7 @@ namespace Snowlight.Game.Catalog
                 mPages.Add(-1, new CatalogPage(-1, 0, string.Empty, 0, 0, string.Empty, true, true, string.Empty, null, null, new List<CatalogItem>())); // root category
 
                 MySqlClient.SetParameter("enabled", "1");
-                DataTable ItemTable = MySqlClient.ExecuteQueryTable("SELECT * FROM catalog_items WHERE enabled = @enabled ORDER BY base_id ASC");
+                DataTable ItemTable = MySqlClient.ExecuteQueryTable("SELECT * FROM catalog_items WHERE enabled = @enabled ORDER BY name ASC");
 
                 foreach (DataRow Row in ItemTable.Rows)
                 {

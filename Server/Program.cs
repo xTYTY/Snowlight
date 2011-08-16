@@ -70,8 +70,6 @@ namespace Snowlight
                 Input.ProcessInput(arg.Split(' '));
             }
 
-            ThreadPool.SetMinThreads(10, 10);
-
             try
             {
                 // Initialize and test database

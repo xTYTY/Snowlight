@@ -341,6 +341,7 @@ namespace Snowlight.Game.Sessions
             mBuffer = new byte[512];
             mPongOk = true;
 
+            mSocket.Blocking = false;
             Output.WriteLine("Started client " + Id + ".", OutputLevel.DebugInformation);
 
             BeginReceive();

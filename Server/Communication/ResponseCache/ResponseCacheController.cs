@@ -7,13 +7,15 @@ namespace Snowlight.Communication.ResponseCache
     public class ResponseCacheController : IDisposable
     {
         private int mCacheItemLifetime;
+        private int mCacheMaxCapacity;
         private List<ResponseCacheItem> mCachedResponses;
         private Timer mCacheMonitor;
 
-        public ResponseCacheController(int ItemLifetime)
+        public ResponseCacheController(int ItemLifetime, int MaxCapacity = 10000)
         {
             mCacheItemLifetime = ItemLifetime;
-            mCachedResponses = new List<ResponseCacheItem>();
+            mCacheMaxCapacity = MaxCapacity;
+            mCachedResponses = new List<ResponseCacheItem>(MaxCapacity);
 
             mCacheMonitor = new Timer(new TimerCallback(ProcessCacheMonitor), null, TimeSpan.FromSeconds(mCacheItemLifetime), TimeSpan.FromSeconds(mCacheItemLifetime));
         }
@@ -29,6 +31,7 @@ namespace Snowlight.Communication.ResponseCache
             if (mCachedResponses != null)
             {
                 mCachedResponses.Clear();
+                mCachedResponses = null;
             }
         }
 
@@ -89,6 +92,12 @@ namespace Snowlight.Communication.ResponseCache
         {
             lock (mCachedResponses)
             {
+                if (mCachedResponses.Count > mCacheMaxCapacity)
+                {
+                    // capacity has been reached, to protect overflow remove the oldest element in the cache immediatly..
+                    mCachedResponses.RemoveAt(mCachedResponses.Count - 1);
+                }
+
                 foreach (ResponseCacheItem Item in mCachedResponses)
                 {
                     if (Item.GroupId == GroupId && Item.Request.ToString() == Request.ToString())

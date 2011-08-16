@@ -146,14 +146,11 @@ namespace Snowlight.Game.Catalog
 
         public CatalogItem GetItem(uint ItemId)
         {
-            lock (mItems)
+            foreach (CatalogItem Item in mItems)
             {
-                foreach (CatalogItem Item in mItems)
+                if (Item.Id == ItemId)
                 {
-                    if (Item.Id == ItemId)
-                    {
-                        return Item;
-                    }
+                    return Item;
                 }
             }
 

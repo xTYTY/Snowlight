@@ -38,6 +38,14 @@ namespace Snowlight.Game.Handlers
             // this is packet to complete the friend request quest, should only be completed if quest is active....
             // someone needs to code this ^_^
             DataRouter.RegisterHandler(3210, new ProcessRequestCallback(SurpressingHandler));
+
+            // com.sulake.habbo.communication.messages.outgoing.room.action.CallGuideBotMessageComposer;
+            // guide bot packet..
+            DataRouter.RegisterHandler(440, new ProcessRequestCallback(SurpressingHandler));
+
+            // com.sulake.habbo.communication.messages.outgoing.tracking.LagWarningReportMessageComposer;
+            // something to do with lag warnings? user is lagging? responding too slow to pings?? who knows?
+            DataRouter.RegisterHandler(422, new ProcessRequestCallback(SurpressingHandler));
         }
 
         private static void SurpressingHandler(Session Session, ClientMessage Message)

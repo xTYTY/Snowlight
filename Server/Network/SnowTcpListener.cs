@@ -25,6 +25,7 @@ namespace Snowlight.Network
             mSocket = new Socket(LocalEndpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             mSocket.Bind(LocalEndpoint);
             mSocket.Listen(Backlog);
+            mSocket.Blocking = false;
 
             BeginAccept();
         }

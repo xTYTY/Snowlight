@@ -40,36 +40,27 @@ namespace Snowlight.Game.Pathfinding
 
         public override void MoveTo(Vector2 Position)
         {
-            lock (mPath)
-            {
-                mPath.Clear();
-                mTarget = Position;
-                mPath = FindPath();
-            }
+            mPath.Clear();
+            mTarget = Position;
+            mPath = FindPath();
         }
 
         public override void Clear()
         {
-            lock (mPath)
-            {
-                mPath.Clear();
-                mTarget = null;
-            }
+            mPath.Clear();
+            mTarget = null;
         }
 
         public override Vector2 GetNextStep()
         {
-            lock (mPath)
+            if (IsCompleted)
             {
-                if (IsCompleted)
-                {
-                    return null;
-                }
-
-                Vector2 NextStep = mPath[0];
-                mPath.Remove(NextStep);
-                return NextStep;
+                return null;
             }
+
+            Vector2 NextStep = mPath[0];
+            mPath.Remove(NextStep);
+            return NextStep;
         }
 
         private List<Vector2> FindPath()

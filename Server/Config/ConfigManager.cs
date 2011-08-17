@@ -62,6 +62,8 @@ namespace Snowlight.Config
             mConfigData.Add("moderation.roomlogs.enabled", new ConfigElement("moderation.roomlogs.enabled", ConfigElementType.Boolean, true));
             // Debug
             mConfigData.Add("debug.sso", new ConfigElement("debug.sso", ConfigElementType.Text, string.Empty));
+            // Lang
+            mConfigData.Add("lang", new ConfigElement("lang", ConfigElementType.Text, "en"));
 
             if (File.Exists(mConfigPath))
             {

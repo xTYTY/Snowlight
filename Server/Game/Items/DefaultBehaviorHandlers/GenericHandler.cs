@@ -22,7 +22,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
             ItemEventDispatcher.RegisterEventHandler(ItemBehavior.Rental, new ItemEventHandler(HandleRental));
         }
 
-        private static bool HandleGenericSwitch(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData)
+        private static bool HandleGenericSwitch(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData, uint Opcode)
         {
             switch (Event)
             {
@@ -59,7 +59,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
             return true;
         }
 
-        private static bool HandleStepSwitch(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData)
+        private static bool HandleStepSwitch(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData, uint Opcode)
         {
             switch (Event)
             {
@@ -92,7 +92,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
             return true;
         }
 
-        private static bool HandleScoreboard(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData)
+        private static bool HandleScoreboard(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData, uint Opcode)
         {
             switch (Event)
             {
@@ -150,7 +150,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
             return true;
         }
 
-        private static bool HandleRental(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData)
+        private static bool HandleRental(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData, uint Opcode)
         {
             switch (Event)
             {
@@ -189,7 +189,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
                     break;
             }
 
-            return HandleGenericSwitch(Session, Item, Instance, Event, RequestData);
+            return HandleGenericSwitch(Session, Item, Instance, Event, RequestData, 0);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
             ItemEventDispatcher.RegisterEventHandler(ItemBehavior.OneWayGate, new ItemEventHandler(HandleOneWayGate));
         }
 
-        private static bool HandleFixedGateSwitch(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData)
+        private static bool HandleFixedGateSwitch(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData, uint Opcode)
         {
             switch (Event)
             {
@@ -54,7 +54,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
             return true;
         }
 
-        private static bool HandleOneWayGate(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData)
+        private static bool HandleOneWayGate(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData, uint Opcode)
         {
             switch (Event)
             {

@@ -13,7 +13,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
             ItemEventDispatcher.RegisterEventHandler(ItemBehavior.TimedAlert, new ItemEventHandler(HandleAlert));
         }
 
-        private static bool HandleAlert(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData)
+        private static bool HandleAlert(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData, uint Opcode)
         {
             switch (Event)
             {

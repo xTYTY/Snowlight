@@ -1219,7 +1219,7 @@ namespace Snowlight.Game.Rooms
 
             int RequestData = Message.PopWiredInt32();
 
-            ItemEventDispatcher.InvokeItemEventHandler(Session, Item, Instance, ItemEventType.Interact, RequestData);
+            ItemEventDispatcher.InvokeItemEventHandler(Session, Item, Instance, ItemEventType.Interact, RequestData, Message.Id);
             QuestManager.ProgressUserQuest(Session, QuestType.EXPLORE_FIND_ITEM, Item.DefinitionId);
 
             if (Item.Definition.Behavior == ItemBehavior.Switchable)

@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Snowlight.Specialized;
 
 namespace Snowlight.Communication.Outgoing

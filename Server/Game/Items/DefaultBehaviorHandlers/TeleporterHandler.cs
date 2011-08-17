@@ -17,7 +17,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
             ItemEventDispatcher.RegisterEventHandler(ItemBehavior.Teleporter, new ItemEventHandler(HandleTeleporter));
         }
 
-        private static bool HandleTeleporter(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData)
+        private static bool HandleTeleporter(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData, uint Opcode)
         {
             RoomActor Actor = null;
                     

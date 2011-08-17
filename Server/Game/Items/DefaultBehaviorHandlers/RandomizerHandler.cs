@@ -21,7 +21,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
             ItemEventDispatcher.RegisterEventHandler(ItemBehavior.LoveShuffler, new ItemEventHandler(HandleLoveShuffler));
         }
 
-        private static bool HandleHabboWheel(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData)
+        private static bool HandleHabboWheel(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData, uint Opcode)
         {
             switch (Event)
             {
@@ -72,7 +72,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
             return true;
         }
 
-        private static bool HandleBottle(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData)
+        private static bool HandleBottle(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData, uint Opcode)
         {
             switch (Event)
             {
@@ -117,7 +117,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
             return true;
         }
 
-        private static bool HandleDice(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData)
+        private static bool HandleDice(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData, uint Opcode)
         {
             switch (Event)
             {
@@ -150,7 +150,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
                         break;
                     }
 
-                    if (RequestData >= 0)
+                    if (Opcode == 76)
                     {
                         if (Item.Flags != "-1")
                         {
@@ -165,6 +165,9 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
                     {
                         Item.Flags = "0";
                         Item.DisplayFlags = "0";
+
+                        Item.BroadcastStateUpdate(Instance);
+                        RoomManager.MarkWriteback(Item, true);
                     }
 
                     break;
@@ -183,7 +186,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
             return true;
         }
 
-        private static bool HandleLoveShuffler(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData)
+        private static bool HandleLoveShuffler(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData, uint Opcode)
         {
             switch (Event)
             {

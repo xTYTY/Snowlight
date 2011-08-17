@@ -17,7 +17,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
             ItemEventDispatcher.RegisterEventHandler(ItemBehavior.TraxPlayer, new ItemEventHandler(HandleJukebox));
         }
 
-        private static bool HandleJukebox(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData)
+        private static bool HandleJukebox(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData, uint Opcode)
         {
             switch (Event)
             {

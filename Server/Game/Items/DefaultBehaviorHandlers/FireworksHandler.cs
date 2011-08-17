@@ -19,7 +19,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
             ItemEventDispatcher.RegisterEventHandler(ItemBehavior.Fireworks, new ItemEventHandler(HandleFireworks));
         }
 
-        private static bool HandleFireworks(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData)
+        private static bool HandleFireworks(Session Session, Item Item, RoomInstance Instance, ItemEventType Event, int RequestData, uint Opcode)
         {
             int CurrentCharges = 0;
             int.TryParse(Item.Flags, out CurrentCharges);

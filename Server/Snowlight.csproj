@@ -122,7 +122,7 @@
     <Compile Include="Communication\Outgoing\Furni\RollerEventComposer.cs" />
     <Compile Include="Communication\Outgoing\Furni\SongDataComposer.cs" />
     <Compile Include="Communication\Outgoing\Furni\StickyDataComposer.cs" />
-    <Compile Include="Communication\Outgoing\Handshake\UniqueMachineIDComposer.cs" />
+    <Compile Include="Communication\Outgoing\Handshake\UniqueMachineIdComposer.cs" />
     <Compile Include="Communication\Outgoing\Handshake\UserRightsMessageComposer.cs" />
     <Compile Include="Communication\Outgoing\Inventory\InventoryComposer.cs" />
     <Compile Include="Communication\Outgoing\Inventory\InventoryItemAddedComposer.cs" />

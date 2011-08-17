@@ -18,19 +18,19 @@ namespace Snowlight.Game.Items
         InstanceLoaded = 5
     }
 
-    public delegate bool ItemEventHandler(Session Session, Item Item, RoomInstance Instance, ItemEventType Type, int RequestData);
+    public delegate bool ItemEventHandler(Session Session, Item Item, RoomInstance Instance, ItemEventType Type, int RequestData, uint Opcode);
 
     public static class ItemEventDispatcher
     {
-        private static object mSyncRoot;
         private static Dictionary<ItemBehavior, List<ItemEventHandler>> mEventHandlers;
 
         public static void Initialize()
         {
-            mSyncRoot = new object();
             mEventHandlers = new Dictionary<ItemBehavior, List<ItemEventHandler>>();
 
             RegisterDefaultEventHandlers();
+
+            // todo: register plugin handlers
         }
 
         public static void RegisterDefaultEventHandlers()
@@ -47,18 +47,15 @@ namespace Snowlight.Game.Items
             RollerHandler.Register();
         }
 
-        public static void InvokeItemEventHandler(Session Session, Item Item, RoomInstance Instance, ItemEventType Type, int RequestData = 0)
+        public static void InvokeItemEventHandler(Session Session, Item Item, RoomInstance Instance, ItemEventType Type, int RequestData = 0, uint Opcode = 0)
         {
-            lock (mSyncRoot)
+            if (mEventHandlers.ContainsKey(Item.Definition.Behavior))
             {
-                if (mEventHandlers.ContainsKey(Item.Definition.Behavior))
+                foreach (ItemEventHandler EventHandler in mEventHandlers[Item.Definition.Behavior])
                 {
-                    foreach (ItemEventHandler EventHandler in mEventHandlers[Item.Definition.Behavior])
+                    if (!EventHandler.Invoke(Session, Item, Instance, Type, RequestData, Opcode))
                     {
-                        if (!EventHandler.Invoke(Session, Item, Instance, Type, RequestData))
-                        {
-                            return;
-                        }
+                        return;
                     }
                 }
             }
@@ -66,15 +63,12 @@ namespace Snowlight.Game.Items
 
         public static void RegisterEventHandler(ItemBehavior BehaviorType, ItemEventHandler EventHandler)
         {
-            lock (mSyncRoot)
+            if (!mEventHandlers.ContainsKey(BehaviorType))
             {
-                if (!mEventHandlers.ContainsKey(BehaviorType))
-                {
-                    mEventHandlers.Add(BehaviorType, new List<ItemEventHandler>());
-                }
-
-                mEventHandlers[BehaviorType].Add(EventHandler);
+                mEventHandlers.Add(BehaviorType, new List<ItemEventHandler>());
             }
+
+            mEventHandlers[BehaviorType].Add(EventHandler);        
         }
     }
 }

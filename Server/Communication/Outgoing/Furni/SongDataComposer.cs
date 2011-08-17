@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Snowlight.Game.Music;
-using System.Collections.Generic;
 
 namespace Snowlight.Communication.Outgoing
 {

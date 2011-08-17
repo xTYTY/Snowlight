@@ -88,6 +88,7 @@ namespace Snowlight.Communication
         public const uint MESSENGER_FOLLOW_RESULT = 286;
         public const uint DISCONNECT_REASON = 287;
         public const uint ROOM_FURNI_CAMPAIGNS = 297;
+        public const uint ERROR_NOTIFICATION = 299;
         public const uint SONG_DATA = 300;
         public const uint CLIENT_CONFIG = 308;
         public const uint ROOM_GROUP_BADGES = 309;
@@ -145,7 +146,7 @@ namespace Snowlight.Communication
         public const uint ROOM_RIGHTS_REMOVED_CONFIRMATION = 511;
         public const uint ROOM_CAN_CREATE_RESULT = 512;
         public const uint ROOM_ITEM_PLACEMENT_ERROR = 516;
-        public const uint LOGIN_UNKNOWN_1 = 517;
+        public const uint INFO_FEED_ENABLE = 517;
         public const uint HELP_HOMEPAGE = 518;
         public const uint HELP_CATEGORY_LIST = 519;
         public const uint HELP_TOPIC = 520;
@@ -170,6 +171,9 @@ namespace Snowlight.Communication
         public const uint CATALOG_CLUB_OFFERS = 625;
         public const uint ACHIEVEMENT_DATA_LIST = 627;
         public const uint FIREWORKS_CHARGE_INFO = 629;
+        public const uint WIRED_FURNI_TRIGGER = 650;
+        public const uint WIRED_FURNI_ACTION = 651;
+        public const uint WIRED_FURNI_CONDITION = 652;
         public const uint QUEST_LIST = 800;
         public const uint QUEST_COMPLETED = 801;
         public const uint QUEST_STARTED = 802;
@@ -181,9 +185,7 @@ namespace Snowlight.Communication
         public const uint INVENTORY_NEW_ITEM = 832;
         public const uint MESSENGER_FRIEND_EVENT = 833;
         public const uint ACHIEVEMENTS_PROGRESS_UPDATE = 913;
-        public const uint ERROR_NOTIFICATION = 299;
         public const uint GET_STREAM_EVENT = 950;
-        public const uint INFO_FEED_ENABLE = 517;
     }
 
     public static class OpcodesIn
@@ -349,7 +351,7 @@ namespace Snowlight.Communication
         public const uint FRIEND_BAR_FIND_NEW_FRIENDS = 490;
         public const uint SESSION_DISCONNECT_EVENT = 512;
         public const uint USER_TRY_LOGIN = 756;
-        public const uint UNIQUE_ID = 813; // Shockwave ID. No longer seems to function. Maybe because we're not using Shockwave.
+        public const uint UNIQUE_ID = 813;
         public const uint VERSION_CHECKING = 1170;
         public const uint USER_GET_SESSION_PARAMS = 1817;
         public const uint GENERATE_SECRET_KEY = 2002;

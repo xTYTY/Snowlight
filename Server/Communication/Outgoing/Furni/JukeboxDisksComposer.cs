@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Snowlight.Game.Sessions;
-using System.Collections.Generic;
 using Snowlight.Game.Items;
 
 namespace Snowlight.Communication.Outgoing

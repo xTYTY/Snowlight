@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 using Snowlight.Game.Pets;
 using Snowlight.Specialized;
-using System.Collections.Generic;
 
 namespace Snowlight.Communication.Outgoing
 {

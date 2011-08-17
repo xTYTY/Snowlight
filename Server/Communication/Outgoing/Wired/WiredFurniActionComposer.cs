@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Snowlight.Communication.Outgoing
 {
@@ -10,7 +7,7 @@ namespace Snowlight.Communication.Outgoing
         public static ServerMessage Compose()
         {
             // com.sulake.habbo.communication.messages.incoming.userdefinedroomevents.WiredFurniActionEvent;
-            return new ServerMessage(651); // TODO: Needs to be completed.. this is just header..
+            return new ServerMessage(OpcodesOut.WIRED_FURNI_ACTION); // TODO: Needs to be completed.. this is just header..
         }
     }
 }

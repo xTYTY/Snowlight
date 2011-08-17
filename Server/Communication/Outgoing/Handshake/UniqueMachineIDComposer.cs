@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Snowlight.Communication.Outgoing
 {
-    public static class UniqueMachineIDComposer
+    public static class UniqueMachineIdComposer
     {
         public static ServerMessage Compose(string MachineID)
         {

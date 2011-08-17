@@ -12,6 +12,7 @@ using Snowlight.Game.Achievements;
 using Snowlight.Util;
 using System.Text;
 using Snowlight.Game.Moderation;
+using Snowlight.Config.Lang;
 
 namespace Snowlight.Game.Misc
 {
@@ -29,7 +30,7 @@ namespace Snowlight.Game.Misc
             {
                 case "commands":
                     {
-                        Session.SendData(NotificationMessageComposer.Compose("The following commands are available to regular users:\n\n:commands\n:online\n:about\n:pickall"));
+                        Session.SendData(NotificationMessageComposer.Compose((string)LangManager.GetValue("command.commands.info") + ":\n\n:commands\n:online\n:about\n:pickall"));
                         return true;
                     }
                 case "update_catalog":
@@ -42,7 +43,7 @@ namespace Snowlight.Game.Misc
                         {
                             Snowlight.Game.Catalog.CatalogManager.RefreshCatalogData(MySqlClient);
                         }
-                        Session.SendData(NotificationMessageComposer.Compose("Catalog reloaded"));
+                        Session.SendData(NotificationMessageComposer.Compose((string)LangManager.GetValue("command.updatecatalog.success")));
                         return true;
                     }
                 case "update_items":
@@ -61,7 +62,7 @@ namespace Snowlight.Game.Misc
                 case "online":
                     {
                         List<string> OnlineUsers = SessionManager.ConnectedUserData.Values.ToList();
-                        StringBuilder MessageText = new StringBuilder("There are currently " + OnlineUsers.Count + " user(s) online:\n");
+                        StringBuilder MessageText = new StringBuilder((string)LangManager.GetValue("command.online.part1") + " " + OnlineUsers.Count + " " + (string)LangManager.GetValue("command.online.part2") + "\n");
 
                         foreach (string OnlineUser in OnlineUsers)
                         {
@@ -81,7 +82,7 @@ namespace Snowlight.Game.Misc
 
                         if (Bits.Length < 2)
                         {
-                            Session.SendData(RoomChatComposer.Compose(Actor.Id, "Invalid syntax - :kick <username>", 0, ChatType.Whisper));
+                            Session.SendData(RoomChatComposer.Compose(Actor.Id, (string)LangManager.GetValue("command.invalidsyntax") + " - :kick <username>", 0, ChatType.Whisper));
                             return true;
                         }
 
@@ -90,7 +91,7 @@ namespace Snowlight.Game.Misc
 
                         if (TargetSession == null || TargetSession.HasRight("moderation_tool") || !TargetSession.InRoom)
                         {
-                            Session.SendData(RoomChatComposer.Compose(Actor.Id, "Target user '" + Username + "' is offline or cannot be kicked.", 0, ChatType.Whisper));
+                            Session.SendData(RoomChatComposer.Compose(Actor.Id, (string)LangManager.GetValue("command.targetuser") + " '" + Username + "' is offline or cannot be kicked.", 0, ChatType.Whisper));
                             return true;
                         }
 
@@ -113,7 +114,7 @@ namespace Snowlight.Game.Misc
 
                         if (Bits.Length < 2)
                         {
-                            Session.SendData(RoomChatComposer.Compose(Actor.Id, "Invalid syntax - :kick <username>", 0, ChatType.Whisper));
+                            Session.SendData(RoomChatComposer.Compose(Actor.Id, (string)LangManager.GetValue("command.invalidsyntax") + " - :kick <username>", 0, ChatType.Whisper));
                             return true;
                         }
 
@@ -122,12 +123,12 @@ namespace Snowlight.Game.Misc
 
                         if (TargetSession == null || TargetSession.HasRight("moderation_tool") || !TargetSession.InRoom)
                         {
-                            Session.SendData(RoomChatComposer.Compose(Actor.Id, "Target user '" + Username + "' is offline, not in a room, or cannot be kicked.", 0, ChatType.Whisper));
+                            Session.SendData(RoomChatComposer.Compose(Actor.Id, (string)LangManager.GetValue("command.targetuser") + " '" + Username + "' is offline, not in a room, or cannot be kicked.", 0, ChatType.Whisper));
                             return true;
-                        } 
+                        }
 
                         RoomManager.RemoveUserFromRoom(TargetSession, true);
-                        TargetSession.SendData(NotificationMessageComposer.Compose("You have been kicked from the room by a community staff member."));
+                        TargetSession.SendData(NotificationMessageComposer.Compose((string)LangManager.GetValue("command.kick.success")));
 
                         using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
                         {
@@ -147,11 +148,11 @@ namespace Snowlight.Game.Misc
                         if (Instance.RoomMuted)
                         {
                             Instance.RoomMuted = false;
-                            Session.SendData(RoomChatComposer.Compose(Actor.Id, "The current room has been unmuted successfully.", 0, ChatType.Whisper));
+                            Session.SendData(RoomChatComposer.Compose(Actor.Id, (string)LangManager.GetValue("command.roomunmute.success"), 0, ChatType.Whisper));
                         }
                         else
                         {
-                            Session.SendData(RoomChatComposer.Compose(Actor.Id, "This room is not muted.", 0, ChatType.Whisper));
+                            Session.SendData(RoomChatComposer.Compose(Actor.Id, (string)LangManager.GetValue("command.roomunmute.error"), 0, ChatType.Whisper));
                         }
 
                         using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
@@ -172,11 +173,11 @@ namespace Snowlight.Game.Misc
                         if (!Instance.RoomMuted)
                         {
                             Instance.RoomMuted = true;
-                            Session.SendData(RoomChatComposer.Compose(Actor.Id, "The current room has been muted successfully.", 0, ChatType.Whisper));
+                            Session.SendData(RoomChatComposer.Compose(Actor.Id, (string)LangManager.GetValue("command.roommute.success"), 0, ChatType.Whisper));
                         }
                         else
                         {
-                            Session.SendData(RoomChatComposer.Compose(Actor.Id, "This room is already muted.", 0, ChatType.Whisper));
+                            Session.SendData(RoomChatComposer.Compose(Actor.Id, (string)LangManager.GetValue("command.roommute.error"), 0, ChatType.Whisper));
                         }
 
                         using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
@@ -197,7 +198,7 @@ namespace Snowlight.Game.Misc
 
                         if (Bits.Length < 2)
                         {
-                            Session.SendData(RoomChatComposer.Compose(Actor.Id, "Invalid syntax - :unmute <username>", 0, ChatType.Whisper));
+                            Session.SendData(RoomChatComposer.Compose(Actor.Id, (string)LangManager.GetValue("command.invalidsyntax") + " - :unmute <username>", 0, ChatType.Whisper));
                             return true;
                         }
 
@@ -207,13 +208,13 @@ namespace Snowlight.Game.Misc
 
                         if (TargetSession == null)
                         {
-                            Session.SendData(RoomChatComposer.Compose(Actor.Id, "Target user '" + Username + "' does not exist or is not online.", 0, ChatType.Whisper));
+                            Session.SendData(RoomChatComposer.Compose(Actor.Id, (string)LangManager.GetValue("command.targetuser") + " '" + Username + "' " + (string)LangManager.GetValue("command.cannotproceedcmd3"), 0, ChatType.Whisper));
                             return true;
                         }
 
                         if (!TargetSession.CharacterInfo.IsMuted)
                         {
-                            Session.SendData(RoomChatComposer.Compose(Actor.Id, "Target user '" + Username + "' is not muted.", 0, ChatType.Whisper));
+                            Session.SendData(RoomChatComposer.Compose(Actor.Id, (string)LangManager.GetValue("command.targetuser") + " '" + Username + "' " + (string)LangManager.GetValue("command.unmute.error"), 0, ChatType.Whisper));
                             return true;
                         }
 
@@ -222,8 +223,8 @@ namespace Snowlight.Game.Misc
                             TargetSession.CharacterInfo.Unmute(MySqlClient);
                         }
 
-                        TargetSession.SendData(NotificationMessageComposer.Compose("You have been unmuted. Please reload the room."));
-                        Session.SendData(RoomChatComposer.Compose(Actor.Id, "Target user '" + Username + "' was successfully unmuted.", 0, ChatType.Whisper));
+                        TargetSession.SendData(NotificationMessageComposer.Compose((string)LangManager.GetValue("command.unmute.sucess")));
+                        Session.SendData(RoomChatComposer.Compose(Actor.Id, (string)LangManager.GetValue("command.targetuser") + " '" + Username + "' " + (string)LangManager.GetValue("command.unmute.sucess2"), 0, ChatType.Whisper));
 
                         using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
                         {
@@ -243,7 +244,7 @@ namespace Snowlight.Game.Misc
 
                         if (Bits.Length < 2)
                         {
-                            Session.SendData(RoomChatComposer.Compose(Actor.Id, "Invalid syntax - :mute <username> [length in seconds]", 0, ChatType.Whisper));
+                            Session.SendData(RoomChatComposer.Compose(Actor.Id, (string)LangManager.GetValue("command.invalidsyntax") + " - :mute <username> [length in seconds]", 0, ChatType.Whisper));
                             return true;
                         }
 
@@ -262,7 +263,7 @@ namespace Snowlight.Game.Misc
 
                         if (TimeToMute > 3600)
                         {
-                            Session.SendData(RoomChatComposer.Compose(Actor.Id, "The maximum mute time is one hour.", 0, ChatType.Whisper));
+                            Session.SendData(RoomChatComposer.Compose(Actor.Id, (string)LangManager.GetValue("command.mute.error"), 0, ChatType.Whisper));
                             return true;
                         }
 
@@ -270,7 +271,7 @@ namespace Snowlight.Game.Misc
 
                         if (TargetSession == null || TargetSession.HasRight("mute"))
                         {
-                            Session.SendData(RoomChatComposer.Compose(Actor.Id, "Target user '" + Username + "' does not exist, is not online, or cannot be muted.", 0, ChatType.Whisper));
+                            Session.SendData(RoomChatComposer.Compose(Actor.Id, (string)LangManager.GetValue("command.targetuser") + " '" + Username + "' " + (string)LangManager.GetValue("command.cannotproceedcmd4"), 0, ChatType.Whisper));
                             return true;
                         }
 
@@ -282,7 +283,7 @@ namespace Snowlight.Game.Misc
                         }
 
                         TargetSession.SendData(RoomMutedComposer.Compose(TimeToMute));
-                        Session.SendData(RoomChatComposer.Compose(Actor.Id, "User '" + Username + "' has been muted successfully for " + TimeToMute + " seconds.", 0, ChatType.Whisper));
+                        Session.SendData(RoomChatComposer.Compose(Actor.Id, (string)LangManager.GetValue("command.mute.sucess.part1") + " '" + Username + "' " + (string)LangManager.GetValue("command.mute.sucess.part2") + " " + TimeToMute + " seconds.", 0, ChatType.Whisper));
                         return true;
                     }
 
@@ -322,14 +323,14 @@ namespace Snowlight.Game.Misc
 
                     Session.InventoryCache.ClearAndDeleteAll();
                     Session.SendData(InventoryRefreshComposer.Compose());
-                    Session.SendData(NotificationMessageComposer.Compose("Your inventory has been emptied."));
+                    Session.SendData(NotificationMessageComposer.Compose((string)LangManager.GetValue("command.emptyinv.sucess")));
                     return true;
 
                 case "pickall":
 
                     if (!Instance.CheckUserRights(Session, true))
                     {
-                        Session.SendData(NotificationMessageComposer.Compose("You do not have rights to pickall in this room."));
+                        Session.SendData(NotificationMessageComposer.Compose((string)LangManager.GetValue("command.pickall.error")));
                         return true;
                     }
 

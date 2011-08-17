@@ -31,6 +31,8 @@ using Snowlight.Game.Recycler;
 using Snowlight.Game.Pets;
 using Snowlight.Game.Music;
 using Snowlight.Game.Rooms.Trading;
+using Snowlight.Config.Lang;
+
 
 namespace Snowlight
 {
@@ -62,6 +64,9 @@ namespace Snowlight
 
             ConfigManager.Initialize(Constants.DataFileDirectory + "\\server-main.cfg");
             Output.SetVerbosityLevel((OutputLevel)ConfigManager.GetValue("output.verbositylevel"));
+
+            // Load Lang
+            LangManager.Initialize(Constants.LangFileDirectory + "\\lang_" + ConfigManager.GetValue("lang") + ".lang");
 
             // Process args
             foreach (string arg in args)
@@ -158,7 +163,7 @@ namespace Snowlight
             TimeSpan TimeSpent = DateTime.Now - InitStart;
 
             Output.WriteLine("The server has initialized successfully (" + Math.Round(TimeSpent.TotalSeconds, 2) + " seconds). Ready for connections.", OutputLevel.Notification);
-            Output.WriteLine("Press the ENTER key for command input. Shut down server with 'STOP' command.", OutputLevel.Notification);
+            Output.WriteLine((string)LangManager.GetValue("initialized.info.cmd"), OutputLevel.Notification);
 
             Console.Beep();
             Input.Listen(); // This will make the main thread process console while Program.Alive.
@@ -175,7 +180,7 @@ namespace Snowlight
         public static void HandleFatalError(string Message)
         {
             Output.WriteLine(Message, OutputLevel.CriticalError);
-            Output.WriteLine("Cannot proceed; press any key to stop the server.", OutputLevel.CriticalError);
+            Output.WriteLine((string)LangManager.GetValue("initialized.error"), OutputLevel.CriticalError);
 
             Console.ReadKey(true);
 

@@ -20,7 +20,7 @@ namespace Snowlight.Game.Characters
         {
             mCharacterInfoCache = new Dictionary<uint, CharacterInfo>();
 
-            mCacheMonitor = new Timer(new TimerCallback(MonitorCache), null, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(30));
+            mCacheMonitor = new Timer(new TimerCallback(MonitorCache), null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
         }
 
         private static void MonitorCache(object state)
@@ -91,7 +91,7 @@ namespace Snowlight.Game.Characters
 
             return null;
         }
-        
+
         public static CharacterInfo GenerateCharacterInfoFromRow(SqlDatabaseClient MySqlClient, uint LinkedClientId, DataRow Row)
         {
             return new CharacterInfo(MySqlClient, LinkedClientId, (uint)Row["id"], (string)Row["username"], (string)Row["real_name"],

@@ -45,6 +45,19 @@ namespace Snowlight.Game.Misc
                         Session.SendData(NotificationMessageComposer.Compose("Catalog reloaded"));
                         return true;
                     }
+                case "update_items":
+                    {
+                        if (!Session.HasRight("hotel_admin"))
+                        {
+                            return false;
+                        }
+                        using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
+                        {
+                            Snowlight.Game.Items.ItemDefinitionManager.Initialize(MySqlClient);
+                        }
+                        Session.SendData(NotificationMessageComposer.Compose("Items reloaded"));
+                        return true;
+                    }
                 case "online":
                     {
                         List<string> OnlineUsers = SessionManager.ConnectedUserData.Values.ToList();

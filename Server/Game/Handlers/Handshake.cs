@@ -41,7 +41,7 @@ namespace Snowlight.Game.Handlers
             }
 
             string Ticket = UserInputFilter.FilterString(Message.PopString());
-            Session.TryAuthenticate(Ticket, Session.RemoteAddress.ToString());
+            Session.TryAuthenticate(Ticket, Session.RemoteAddress);
         }
 
         private static void GetUserInfo(Session Session, ClientMessage Message)

@@ -57,7 +57,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
 
                     if (Distance.Calculate(Actor.Position.GetVector2(), Item.RoomPosition.GetVector2()) > 1)
                     {
-                        Actor.MoveToItemAndInteract(Item, RequestData, Item.SquareBehind);
+                        Actor.MoveToItemAndInteract(Item, RequestData, Opcode, Item.SquareBehind);
                         return true;
                     }
 

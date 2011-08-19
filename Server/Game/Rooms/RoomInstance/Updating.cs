@@ -90,7 +90,6 @@ namespace Snowlight.Game.Rooms
                         }
 
                         Actor.MoveToAndInteract = 0;
-                        Actor.MoveToAndInteractData = 0;
                     }
                 }
 

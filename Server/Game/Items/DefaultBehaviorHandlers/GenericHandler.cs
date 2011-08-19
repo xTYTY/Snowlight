@@ -112,7 +112,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
 
                     if (!Distance.TilesTouching(Actor.Position.GetVector2(), Item.RoomPosition.GetVector2()))
                     {
-                        Actor.MoveToItemAndInteract(Item, RequestData);
+                        Actor.MoveToItemAndInteract(Item, RequestData, Opcode);
                         break;
                     }
 

@@ -50,6 +50,7 @@ namespace Snowlight.Game.Rooms
         private bool mWalkingBlocked;
         private uint mMoveToAndInteract;
         private int mMoveToAndInteractData;
+        private uint mMoveToAndInteractOpcode;
         private bool mAvatarEffectByItem;
         private int mAntiSpamMessagesSent;
         private int mAntiSpamTicks;
@@ -369,6 +370,19 @@ namespace Snowlight.Game.Rooms
             }
         }
 
+        public uint MoveToAndInteractOpcode
+        {
+            get
+            {
+                return mMoveToAndInteractOpcode;
+            }
+
+            set
+            {
+                mMoveToAndInteractOpcode = value;
+            }
+        }
+
         public bool AvatarEffectByItem
         {
             get
@@ -472,12 +486,13 @@ namespace Snowlight.Game.Rooms
             mWalkingBlocked = false;
         }
 
-        public void MoveToItemAndInteract(Item Item, int RequestData, Vector2 MoveToPosition = null)
+        public void MoveToItemAndInteract(Item Item, int RequestData, uint Opcode, Vector2 MoveToPosition = null)
         {
             MoveTo(MoveToPosition == null ? Item.SquareInFront : MoveToPosition);
 
             mMoveToAndInteract = Item.Id;
             mMoveToAndInteractData = RequestData;
+            mMoveToAndInteractOpcode = Opcode;
         }
 
         public void MoveTo(Vector2 ToPosition, bool IgnoreCanInitiate = false, bool IgnoreRedirections = false, bool DisableClipping = false)

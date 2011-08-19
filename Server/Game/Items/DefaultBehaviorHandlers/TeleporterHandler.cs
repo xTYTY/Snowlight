@@ -84,7 +84,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
 
                     if (!IsInFront && !IsInTele)
                     {
-                        Actor.MoveToItemAndInteract(Item, RequestData);
+                        Actor.MoveToItemAndInteract(Item, RequestData, Opcode);
                         break;
                     }
 

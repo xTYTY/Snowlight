@@ -92,7 +92,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
 
                     if (Actor.Position.X != Item.SquareInFront.X || Actor.Position.Y != Item.SquareInFront.Y)
                     {
-                        Actor.MoveToItemAndInteract(Item, RequestData);
+                        Actor.MoveToItemAndInteract(Item, RequestData, Opcode);
                         break;
                     }
 

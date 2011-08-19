@@ -51,7 +51,7 @@ namespace Snowlight.Game.Items.DefaultBehaviorHandlers
                         if (InteractingActor.Position.X != Item.SquareInFront.X || InteractingActor.Position.Y !=
                             Item.SquareInFront.Y)
                         {
-                            InteractingActor.MoveToItemAndInteract(Item, RequestData);
+                            InteractingActor.MoveToItemAndInteract(Item, RequestData, Opcode);
                             return true;
                         }
 

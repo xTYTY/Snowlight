@@ -31,7 +31,6 @@ using Snowlight.Game.Recycler;
 using Snowlight.Game.Pets;
 using Snowlight.Game.Music;
 using Snowlight.Game.Rooms.Trading;
-using Snowlight.Config.Lang;
 
 
 namespace Snowlight
@@ -58,41 +57,40 @@ namespace Snowlight
             mAlive = true;
             DateTime InitStart = DateTime.Now;
 
-            // Set up basic output, configuration, etc
+            // Set up basic output
             Output.InitializeStream(true, OutputLevel.DebugInformation);
-            Output.WriteLine("Initializing Snowlight...");
+            Output.WriteLine("Initializing Snowlight..."); // Cannot be localized before config+lang is loaded
 
+            // Load configuration, translation, and re-configure output from config data
             ConfigManager.Initialize(Constants.DataFileDirectory + "\\server-main.cfg");
             Output.SetVerbosityLevel((OutputLevel)ConfigManager.GetValue("output.verbositylevel"));
-
-            // Load Lang
-            LangManager.Initialize(Constants.LangFileDirectory + "\\lang_" + ConfigManager.GetValue("lang") + ".lang");
+            Localization.Initialize(Constants.LangFileDirectory + "\\lang_" + ConfigManager.GetValue("lang") + ".lang");
 
             // Process args
             foreach (string arg in args)
             {
-                Output.WriteLine("Command line argument: " + arg);
+                Output.WriteLine(Localization.GetValue("core.init.cmdarg", arg));
                 Input.ProcessInput(arg.Split(' '));
             }
 
             try
             {
                 // Initialize and test database
-                Output.WriteLine("Initializing MySQL manager...");
+                Output.WriteLine(Localization.GetValue("core.init.mysql"));
                 SqlDatabaseManager.Initialize();
 
                 // Initialize network components
-                Output.WriteLine("Setting up server listener on port " + (int)ConfigManager.GetValue("net.bind.port") + "...");
+                Output.WriteLine(Localization.GetValue("core.init.net", ConfigManager.GetValue("net.bind.port").ToString()));
                 mServer = new SnowTcpListener(new IPEndPoint(IPAddress.Any, (int)ConfigManager.GetValue("net.bind.port")),
                     (int)ConfigManager.GetValue("net.backlog"), new OnNewConnectionCallback(
                         SessionManager.HandleIncomingConnection));
 
                 using (SqlDatabaseClient MySqlClient = SqlDatabaseManager.GetClient())
                 {
-                    Output.WriteLine("Resetting database counters and statistics...");
+                    Output.WriteLine(Localization.GetValue("core.init.dbcleanup"));
                     PerformDatabaseCleanup(MySqlClient);
 
-                    Output.WriteLine("Initializing game components and workers...");
+                    Output.WriteLine(Localization.GetValue("core.init.game"));
 
                     // Core
                     DataRouter.Initialize();
@@ -155,15 +153,15 @@ namespace Snowlight
             }
             catch (Exception e)
             {
-                HandleFatalError("Could not initialize Snowlight: " + e.Message + "\n" + e.StackTrace);
+                HandleFatalError(Localization.GetValue("core.init.error.details", new string[] { e.Message, e.StackTrace }));
                 return;
             }
 
             // Init complete
             TimeSpan TimeSpent = DateTime.Now - InitStart;
 
-            Output.WriteLine("The server has initialized successfully (" + Math.Round(TimeSpent.TotalSeconds, 2) + " seconds). Ready for connections.", OutputLevel.Notification);
-            Output.WriteLine((string)LangManager.GetValue("initialized.info.cmd"), OutputLevel.Notification);
+            Output.WriteLine(Localization.GetValue("core.init.ok", Math.Round(TimeSpent.TotalSeconds, 2).ToString()), OutputLevel.Notification);
+            Output.WriteLine((string)Localization.GetValue("core.init.ok.cmdinfo"), OutputLevel.Notification);
 
             Console.Beep();
             Input.Listen(); // This will make the main thread process console while Program.Alive.
@@ -180,7 +178,7 @@ namespace Snowlight
         public static void HandleFatalError(string Message)
         {
             Output.WriteLine(Message, OutputLevel.CriticalError);
-            Output.WriteLine((string)LangManager.GetValue("initialized.error"), OutputLevel.CriticalError);
+            Output.WriteLine((string)Localization.GetValue("core.init.error.pressanykey"), OutputLevel.CriticalError);
 
             Console.ReadKey(true);
 
@@ -189,7 +187,7 @@ namespace Snowlight
 
         public static void Stop()
         {
-            Output.WriteLine("Stopping Snowlight...");
+            Output.WriteLine(Localization.GetValue("core.uninit"));
 
             mAlive = false; // Will destroy any threads looping for Program.Alive.
 
@@ -197,8 +195,6 @@ namespace Snowlight
 
             mServer.Dispose();
             mServer = null;
-
-            Output.WriteLine("Bye!");
 
             Environment.Exit(0);
         }

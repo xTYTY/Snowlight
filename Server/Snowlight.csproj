@@ -265,8 +265,7 @@
     <Compile Include="Config\ConfigManager.cs" />
     <Compile Include="Config\ConfigElement.cs" />
     <Compile Include="Config\Constants.cs" />
-    <Compile Include="Config\Lang\LangElement.cs" />
-    <Compile Include="Config\Lang\LangManager.cs" />
+    <Compile Include="Config\Localization.cs" />
     <Compile Include="Game\Achievements\Achievement.cs" />
     <Compile Include="Game\Achievements\AchievementCache.cs" />
     <Compile Include="Game\Achievements\AchievementLevel.cs" />

@@ -73,7 +73,7 @@ namespace Snowlight
 
                 default:
 
-                    Output.WriteLine("'" + Args[0].ToLower() + "' is not recognized as a command or internal operation.", OutputLevel.Warning);
+                    Output.WriteLine(Localization.GetValue("core.input.error", Args[0].ToLower()), OutputLevel.Warning);
                     break;
             }
         }

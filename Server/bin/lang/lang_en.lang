@@ -1,8 +1,19 @@
-initialized.info.cmd=Press the ENTER key for command input. Shut down server with 'STOP' command.
-initialized.error=Cannot proceed; press any key to stop the server.
+## Core translations (initialization and basics)
+core.init.cmdarg=Command line argument: %0%
+core.init.mysql=Initializing MySQL manager...
+core.init.net=Setting up server listener on port %0%...
+core.init.dbcleanup=Resetting database counters and statistics...
+core.init.game=Intializing game components and workers...
+core.init.error.details=Could not initialize Snowlight: %0%<br>%1%
+core.init.error.pressanykey=Cannot proceed; press any key to stop the server.
+core.init.ok=Snowlight has initialized successfully (%0% seconds). Ready for connections.
+core.init.ok.cmdinfo=Press the ENTER key for command input. Shut down server with 'STOP' command.
+core.uninit=Stopping Snowlight...
+core.input.error='%0%' is not recognized as a command or internal operation.
+
+## Commands
 command.commands.info=The following commands are available to regular users
-command.online.part1=There are currently
-command.online.part2=user(s) online:
+command.online=There are currently %0% user(s) online:
 command.updatecatalog.success=Catalog reloaded
 command.invalidsyntax=Invalid syntax
 command.targetuser=Target user

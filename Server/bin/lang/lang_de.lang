@@ -1,8 +1,19 @@
-initialized.info.cmd=Drück die ENTER Taste um einen Befehl einzugeben. Beenden mit 'STOP' Befehl.
-initialized.error=Kann nicht fortfahren; drück eine Taste zum beenden.
+## Core translations (initialization and basics)
+core.init.cmdarg=Command line argument: %0%
+core.init.mysql=Initialisiere MySQL manager...
+core.init.net=Starte Server Verbindung auf Port %0%...
+core.init.dbcleanup=Setze Datenbank Zähler und Statistiken zurück...
+core.init.game=Initialisiere Spielkomponenten und Prozesse...
+core.init.error.details=Konnte Snowlight nicht initialisieren: %0%<br>%1%
+core.init.error.pressanykey=Kann nicht fortfahren; drück eine Taste zum beenden.
+core.init.ok=Snowlight wurde erfolgreich initialisiert (%0% Sekunden). Bereit für Verbindungen.
+core.init.ok.cmdinfo=Drück die ENTER Taste um einen Befehl einzugeben. Beenden mit 'STOP' Befehl.
+core.uninit=Beende Snowlight...
+core.input.error='%0%' wurde nicht als interner Befehl erkannt.
+
+## Commands
+command.online=Es sind momentan %0% User online:
 command.commands.info=Die folgenden Befehle sind für normale User
-command.online.part1=Es sind momentan
-command.online.part2=User online:
 command.updatecatalog.success=Katalog aktuallisiert
 command.invalidsyntax=Unbekannter Syntax
 command.targetuser=Target user
@@ -23,4 +34,4 @@ command.mute.sucess.part1=User
 command.mute.sucess.part2=wurde erfolgreich gemuted für
 command.mute.sucess.part3=Sekunden.
 command.emptyinv.sucess=Dein Inventar wurde geleert
-command.pickall.error=Du hast keine Rechte alle Möbel in diesem Raum aufzunehmen.
+command.pickall.error=Du hast keine Rechte alle Möbel in diesem Raum aufzunehmen
